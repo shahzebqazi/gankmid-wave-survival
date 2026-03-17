@@ -1,0 +1,644 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Menu + HUD Mockups</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0f1218;
+      --panel: #1b2130;
+      --text: #edf2f7;
+      --muted: #9ba7b8;
+      --accent: #64a8ff;
+      --ok: #65d4a1;
+      --warn: #f2cc60;
+      --danger: #ee6b73;
+      --border: #36415a;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: radial-gradient(circle at 20% 0%, #1d2537, var(--bg) 45%);
+      color: var(--text);
+      font: 14px/1.45 "Monogram", "Courier New", monospace;
+    }
+
+    .wrap {
+      max-width: 1260px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    h1 { margin: 0 0 8px; font-size: 26px; letter-spacing: 0.5px; }
+    .sub { color: var(--muted); margin: 0 0 18px; }
+
+    .notice {
+      background: #151b28;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 16px;
+      color: var(--muted);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(320px, 1fr));
+      gap: 14px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      min-height: 280px;
+    }
+
+    .panel h2 {
+      margin: 0;
+      padding: 10px 12px;
+      font-size: 15px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .frame {
+      position: relative;
+      height: 250px;
+      padding: 14px;
+      background:
+        linear-gradient(120deg, rgba(255, 255, 255, 0.04), transparent 45%),
+        linear-gradient(40deg, #151a26, #222c42);
+    }
+
+    .menu {
+      width: 70%;
+      max-width: 320px;
+      background: rgba(10, 14, 22, 0.7);
+      border: 1px solid #4b5e85;
+      border-radius: 10px;
+      padding: 10px;
+      backdrop-filter: blur(2px);
+    }
+
+    .title {
+      margin-bottom: 10px;
+      color: #d6e5ff;
+      font-size: 18px;
+      letter-spacing: 1px;
+    }
+
+    .item {
+      border: 1px solid transparent;
+      border-radius: 8px;
+      padding: 8px 10px;
+      margin-bottom: 6px;
+      color: #cad4e3;
+    }
+
+    .item.active {
+      border-color: var(--accent);
+      background: rgba(100, 168, 255, 0.14);
+      color: #eaf2ff;
+      box-shadow: inset 0 0 0 1px rgba(100, 168, 255, 0.3);
+    }
+
+    .prompt-row {
+      margin-top: 10px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .prompt {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      padding: 3px 8px;
+    }
+
+    .prompt img {
+      width: 16px;
+      height: 16px;
+      object-fit: contain;
+    }
+
+    .hud {
+      position: relative;
+      height: 250px;
+      padding: 12px;
+    }
+
+    .bar {
+      width: 250px;
+      height: 16px;
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      overflow: hidden;
+      background: #111827;
+      margin-bottom: 8px;
+    }
+
+    .bar > span {
+      display: block;
+      height: 100%;
+      border-right: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .health > span { width: 68%; background: linear-gradient(90deg, #8be489, #58bf69); }
+    .stam > span { width: 42%; background: linear-gradient(90deg, #90cdf4, #599de3); }
+
+    .hud-label { color: var(--muted); font-size: 12px; margin-bottom: 2px; }
+
+    .interaction {
+      position: absolute;
+      left: 12px;
+      bottom: 12px;
+      background: rgba(8, 10, 17, 0.78);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .interaction img { width: 18px; height: 18px; }
+
+    .quest {
+      position: absolute;
+      right: 12px;
+      top: 12px;
+      width: 200px;
+      background: rgba(8, 10, 17, 0.78);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px;
+      font-size: 12px;
+      color: #d8e0ee;
+    }
+
+    .timer {
+      position: absolute;
+      left: 50%;
+      top: 12px;
+      transform: translateX(-50%);
+      min-width: 150px;
+      text-align: center;
+      background: rgba(8, 10, 17, 0.82);
+      border: 1px solid #4a5d83;
+      border-radius: 999px;
+      padding: 6px 12px;
+      color: #e7efff;
+      font-size: 13px;
+      letter-spacing: 0.4px;
+    }
+
+    .asset-strip {
+      margin-top: 16px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px;
+    }
+
+    .asset-strip h3 {
+      margin: 0 0 8px;
+      font-size: 14px;
+      color: #d5def0;
+    }
+
+    .assets {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+      gap: 8px;
+    }
+
+    .asset {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px;
+      background: rgba(0,0,0,0.15);
+      min-height: 66px;
+    }
+
+    .asset img {
+      width: 20px;
+      height: 20px;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+
+    .asset code {
+      display: block;
+      margin-top: 6px;
+      font-size: 11px;
+      color: var(--muted);
+      word-break: break-all;
+    }
+
+    .slider-group {
+      margin-bottom: 10px;
+    }
+    .slider-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #cad4e3;
+      margin-bottom: 4px;
+    }
+    .slider-label .slider-val {
+      color: var(--accent);
+      font-weight: 600;
+      min-width: 24px;
+      text-align: right;
+    }
+    .slider-track {
+      width: 100%;
+      height: 10px;
+      background: #111827;
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      position: relative;
+      cursor: pointer;
+    }
+    .slider-fill {
+      height: 100%;
+      border-radius: 99px;
+      transition: width 0.08s;
+    }
+    .slider-fill.master { background: linear-gradient(90deg, #a78bfa, #7c3aed); }
+    .slider-fill.music  { background: linear-gradient(90deg, #90cdf4, #599de3); }
+    .slider-fill.sfx    { background: linear-gradient(90deg, #f6ad55, #dd6b20); }
+    .slider-thumb {
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #edf2f7;
+      border: 2px solid var(--accent);
+      box-shadow: 0 0 6px rgba(100,168,255,0.4);
+      pointer-events: none;
+    }
+    .toggle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      font-size: 12px;
+      color: #cad4e3;
+    }
+    .toggle-pill {
+      width: 36px;
+      height: 18px;
+      border-radius: 99px;
+      background: var(--ok);
+      position: relative;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .toggle-pill.off { background: #374151; }
+    .toggle-pill::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 20px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #edf2f7;
+      transition: left 0.15s;
+    }
+    .toggle-pill.off::after { left: 2px; }
+    .btn-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .btn-small {
+      flex: 1;
+      padding: 6px 10px;
+      font-size: 11px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.04);
+      color: #cad4e3;
+      text-align: center;
+      cursor: pointer;
+    }
+    .btn-small:hover {
+      border-color: var(--accent);
+      color: #eaf2ff;
+    }
+    .btn-small.active-btn {
+      border-color: var(--accent);
+      background: rgba(100,168,255,0.14);
+      color: #eaf2ff;
+    }
+
+    @font-face {
+      font-family: "Monogram";
+      src: local("Monogram");
+      font-display: swap;
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <h1>Menu + HUD Mockups</h1>
+    <p class="sub">Static UI mockups with interactive volume sliders and text-only input prompts. Designed for Slice 0 menu direction reviews.</p>
+
+    <div class="notice">
+      Open this file in Cursor preview/browser. The Options panel has interactive sliders — drag to adjust. This mockup intentionally uses text-only prompts (no controller icon pack assets).
+    </div>
+
+    <section class="grid">
+      <article class="panel">
+        <h2>Main Menu Mockup</h2>
+        <div class="frame">
+          <div class="menu">
+            <div class="title">DUNGEON PROTOTYPE</div>
+            <div class="item active">Start Game</div>
+            <div class="item">Options</div>
+            <div class="item">Credits</div>
+            <div class="item">Quit</div>
+
+            <div class="prompt-row">
+              <span class="prompt">[ENTER] Confirm</span>
+              <span class="prompt">[ESC] Back</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <h2>Pause Menu Mockup</h2>
+        <div class="frame">
+          <div class="menu">
+            <div class="title">PAUSED</div>
+            <div class="item active">Resume</div>
+            <div class="item">Options</div>
+            <div class="item">Return to Main Menu</div>
+          </div>
+          <div class="prompt-row" style="position:absolute; right:14px; bottom:12px;">
+            <span class="prompt">[P] Pause</span>
+            <span class="prompt">[ESC] Cancel</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel" id="options-panel">
+        <h2>Options Menu Mockup</h2>
+        <div class="frame">
+          <div class="menu" style="max-width: 380px;">
+            <div class="title">OPTIONS</div>
+
+            <div class="slider-group">
+              <div class="slider-label">
+                <span>Master Volume</span>
+                <span class="slider-val" id="master-val">80</span>
+              </div>
+              <div class="slider-track" data-slider="master" data-default="80">
+                <div class="slider-fill master" style="width:80%"></div>
+                <div class="slider-thumb" style="left:80%"></div>
+              </div>
+            </div>
+
+            <div class="slider-group">
+              <div class="slider-label">
+                <span>Music Volume</span>
+                <span class="slider-val" id="music-val">70</span>
+              </div>
+              <div class="slider-track" data-slider="music" data-default="70">
+                <div class="slider-fill music" style="width:70%"></div>
+                <div class="slider-thumb" style="left:70%"></div>
+              </div>
+            </div>
+
+            <div class="slider-group">
+              <div class="slider-label">
+                <span>SFX Volume</span>
+                <span class="slider-val" id="sfx-val">80</span>
+              </div>
+              <div class="slider-track" data-slider="sfx" data-default="80">
+                <div class="slider-fill sfx" style="width:80%"></div>
+                <div class="slider-thumb" style="left:80%"></div>
+              </div>
+            </div>
+
+            <div class="toggle-row">
+              <span>Fullscreen</span>
+              <div class="toggle-pill" id="toggle-fullscreen"></div>
+            </div>
+
+            <div class="btn-row">
+              <div class="btn-small active-btn" id="btn-reset">Reset Defaults</div>
+              <div class="btn-small" id="btn-back">Back</div>
+            </div>
+          </div>
+          <div class="prompt-row" style="position:absolute; right:14px; bottom:12px;">
+            <span class="prompt">[←/→] Adjust</span>
+            <span class="prompt">[ENTER] Apply</span>
+            <span class="prompt">[ESC] Back</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <h2>HUD Mockup</h2>
+        <div class="hud frame">
+          <div class="timer">WAVE TIME 01:42</div>
+          <div class="hud-label">Health</div>
+          <div class="bar health"><span></span></div>
+          <div class="hud-label">Stamina</div>
+          <div class="bar stam"><span></span></div>
+
+          <div class="quest">
+            <strong>Objective</strong><br>
+            Reach the exit gate and clear the room.
+          </div>
+
+          <div class="interaction">[F] Open Gate</div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <h2>Emote Wheel (Hold Y)</h2>
+        <div class="frame" style="display:grid; place-items:center; position:relative;">
+          <svg viewBox="0 0 340 340" width="280" height="280" style="filter: drop-shadow(0 0 12px rgba(100,168,255,0.15));">
+            <circle cx="170" cy="170" r="140" fill="rgba(4,5,8,0.85)" stroke="#36415a" stroke-width="1"/>
+            <circle cx="170" cy="170" r="50" fill="rgba(8,10,15,0.9)" stroke="#36415a" stroke-width="1"/>
+
+            <g id="emote-segments">
+              <path d="M170,170 L170,30 A140,140 0 0,1 291,89 Z" fill="rgba(77,204,255,0.12)" stroke="rgba(77,204,255,0.3)" stroke-width="1"/>
+              <path d="M170,170 L291,89 A140,140 0 0,1 291,251 Z" fill="rgba(255,217,51,0.12)" stroke="rgba(255,217,51,0.3)" stroke-width="1"/>
+              <path d="M170,170 L291,251 A140,140 0 0,1 170,310 Z" fill="rgba(153,128,77,0.12)" stroke="rgba(153,128,77,0.3)" stroke-width="1"/>
+              <path d="M170,170 L170,310 A140,140 0 0,1 49,251 Z" fill="rgba(102,102,204,0.12)" stroke="rgba(102,102,204,0.3)" stroke-width="1"/>
+              <path d="M170,170 L49,251 A140,140 0 0,1 49,89 Z" fill="rgba(230,77,77,0.12)" stroke="rgba(230,77,77,0.3)" stroke-width="1"/>
+              <path d="M170,170 L49,89 A140,140 0 0,1 170,30 Z" fill="rgba(77,230,77,0.12)" stroke="rgba(77,230,77,0.3)" stroke-width="1"/>
+            </g>
+
+            <text x="170" y="60" text-anchor="middle" fill="#4dccff" font-size="13" font-family="monospace">Wave</text>
+            <text x="170" y="75" text-anchor="middle" fill="#7da8cc" font-size="10" font-family="monospace">👋</text>
+
+            <text x="265" y="120" text-anchor="middle" fill="#ffd933" font-size="13" font-family="monospace">Cheer</text>
+            <text x="265" y="135" text-anchor="middle" fill="#ccad33" font-size="10" font-family="monospace">🎉</text>
+
+            <text x="265" y="230" text-anchor="middle" fill="#99804d" font-size="13" font-family="monospace">Sit</text>
+            <text x="265" y="245" text-anchor="middle" fill="#806a40" font-size="10" font-family="monospace">🪑</text>
+
+            <text x="170" y="285" text-anchor="middle" fill="#6666cc" font-size="13" font-family="monospace">Lie Down</text>
+            <text x="170" y="300" text-anchor="middle" fill="#5555aa" font-size="10" font-family="monospace">🛏</text>
+
+            <text x="75" y="230" text-anchor="middle" fill="#e64d4d" font-size="13" font-family="monospace">Push-Ups</text>
+            <text x="75" y="245" text-anchor="middle" fill="#cc4040" font-size="10" font-family="monospace">💪</text>
+
+            <text x="75" y="120" text-anchor="middle" fill="#4de64d" font-size="13" font-family="monospace">Sit-Ups</text>
+            <text x="75" y="135" text-anchor="middle" fill="#40cc40" font-size="10" font-family="monospace">🏋</text>
+
+            <text x="170" y="174" text-anchor="middle" fill="#6b7385" font-size="10" font-family="monospace">Release Y</text>
+            <text x="170" y="186" text-anchor="middle" fill="#6b7385" font-size="10" font-family="monospace">to select</text>
+          </svg>
+          <div class="prompt-row" style="position:absolute; left:14px; bottom:12px;">
+            <span class="prompt">[Hold Y] Open</span>
+            <span class="prompt">[Mouse] Select</span>
+            <span class="prompt">[Release Y] Play emote</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel" style="grid-column: 1 / -1;">
+        <h2>Character Animation Behaviors</h2>
+        <div class="frame" style="height:auto; padding:16px;">
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:14px;">
+
+            <div style="background:rgba(0,0,0,0.2); border:1px solid var(--border); border-radius:8px; padding:12px;">
+              <div style="color:#4dccff; font-size:14px; font-weight:600; margin-bottom:8px;">Emote Wheel Animations</div>
+              <div style="color:#cad4e3; font-size:12px; line-height:1.6;">
+                Triggered via the radial emote wheel (hold Y). Player character performs the selected emote until interrupted by movement, attack, or jump.<br><br>
+                <span style="color:#4dccff;">Wave</span> → Waving (loop)<br>
+                <span style="color:#ffd933;">Cheer</span> → Cheering (loop)<br>
+                <span style="color:#99804d;">Sit</span> → Sit_Floor_Down → Sit_Floor_Idle (loop)<br>
+                <span style="color:#6666cc;">Lie Down</span> → Lie_Down → Lie_Idle (loop)<br>
+                <span style="color:#e64d4d;">Push-Ups</span> → Push_Ups (loop)<br>
+                <span style="color:#4de64d;">Sit-Ups</span> → Sit_Ups (loop)
+              </div>
+            </div>
+
+            <div style="background:rgba(0,0,0,0.2); border:1px solid var(--border); border-radius:8px; padding:12px;">
+              <div style="color:#65d4a1; font-size:14px; font-weight:600; margin-bottom:8px;">Special Triggered Animations</div>
+              <div style="color:#cad4e3; font-size:12px; line-height:1.6;">
+                Certain animations play automatically in response to game events. These are not player-initiated.<br><br>
+                <span style="color:#ffd933;">Wave Clear</span> → Character plays <strong>Cheering</strong> animation automatically when all enemies in a wave are killed. Plays for ~2 seconds, then returns to idle. Gives satisfying feedback for completing a wave.<br><br>
+                <span style="color:#ee6b73;">Hit Reaction</span> → Hit_A or Hit_B when taking unblocked damage.<br><br>
+                <span style="color:#64a8ff;">Block Hit</span> → Melee_Block_Hit when taking damage while blocking.<br><br>
+                <span style="color:#ee6b73;">Death</span> → Death_A when health reaches zero.
+              </div>
+            </div>
+
+            <div style="background:rgba(0,0,0,0.2); border:1px solid var(--border); border-radius:8px; padding:12px; grid-column: 1 / -1;">
+              <div style="color:#f2cc60; font-size:14px; font-weight:600; margin-bottom:8px;">Animation Priority (highest → lowest)</div>
+              <div style="color:#cad4e3; font-size:12px; line-height:1.6; display:flex; gap:20px; flex-wrap:wrap;">
+                <span><span style="color:#ee6b73;">1.</span> Death</span>
+                <span><span style="color:#ee6b73;">2.</span> Hit reaction</span>
+                <span><span style="color:#f2cc60;">3.</span> Attack swing</span>
+                <span><span style="color:#64a8ff;">4.</span> Jump / Fall / Land</span>
+                <span><span style="color:#64a8ff;">5.</span> Blocking</span>
+                <span><span style="color:#65d4a1;">6.</span> Emote (from wheel)</span>
+                <span><span style="color:#65d4a1;">7.</span> Wave clear cheer</span>
+                <span><span style="color:#9ba7b8;">8.</span> Running / Walking</span>
+                <span><span style="color:#9ba7b8;">9.</span> Idle</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="asset-strip">
+      <h3>Referenced UI Assets in this mockup</h3>
+      <div class="assets" id="assets"></div>
+    </section>
+  </main>
+
+  <script>
+    const usedAssets = [];
+
+    const assets = document.getElementById("assets");
+    if (usedAssets.length === 0) {
+      const card = document.createElement("div");
+      card.className = "asset";
+      card.innerHTML = "<span>No external button icon assets referenced.</span><code>Text-only prompts enabled</code>";
+      assets.appendChild(card);
+    } else {
+      for (const src of usedAssets) {
+        const card = document.createElement("div");
+        card.className = "asset";
+        card.innerHTML = `<img src="${src}" alt=""><span>${src.split("/").pop()}</span><code>${src}</code>`;
+        assets.appendChild(card);
+      }
+    }
+
+    /* ---- Interactive slider mockups ---- */
+    const sliders = document.querySelectorAll('.slider-track');
+    let activeSlider = null;
+
+    function updateSlider(track, pct) {
+      pct = Math.max(0, Math.min(100, Math.round(pct)));
+      const name = track.dataset.slider;
+      track.querySelector('.slider-fill').style.width = pct + '%';
+      track.querySelector('.slider-thumb').style.left = pct + '%';
+      const valEl = document.getElementById(name + '-val');
+      if (valEl) valEl.textContent = pct;
+    }
+
+    function pctFromEvent(track, e) {
+      const rect = track.getBoundingClientRect();
+      return ((e.clientX - rect.left) / rect.width) * 100;
+    }
+
+    sliders.forEach(track => {
+      track.addEventListener('mousedown', e => {
+        activeSlider = track;
+        updateSlider(track, pctFromEvent(track, e));
+      });
+    });
+
+    document.addEventListener('mousemove', e => {
+      if (activeSlider) updateSlider(activeSlider, pctFromEvent(activeSlider, e));
+    });
+
+    document.addEventListener('mouseup', () => { activeSlider = null; });
+
+    /* Toggle fullscreen pill */
+    const toggle = document.getElementById('toggle-fullscreen');
+    if (toggle) {
+      toggle.addEventListener('click', () => toggle.classList.toggle('off'));
+    }
+
+    /* Reset defaults */
+    const resetBtn = document.getElementById('btn-reset');
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        sliders.forEach(track => {
+          updateSlider(track, parseInt(track.dataset.default || 80));
+        });
+        if (toggle) toggle.classList.remove('off');
+      });
+    }
+  </script>
+</body>
+</html>
+

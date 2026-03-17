@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>References & Planning — GankMid</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="../index.html" class="logo">Gank<span>Mid</span> — Wave Survival</a>
+      <nav>
+        <a href="../index.html">Home</a>
+        <a href="ui-assets-gallery.html">3D Assets</a>
+        <a href="audio-asset-gallery.html">Audio</a>
+        <a href="menu-hud-mockups.html">Menu & HUD</a>
+        <a href="wave-map-mockups.html">Map Mockups</a>
+        <a href="audio-design.html">Audio Design</a>
+        <a href="powerup-design.html">Power-Ups</a>
+        <a href="references.html" class="active">References</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container">
+    <section class="hero" style="margin-bottom:24px;">
+      <h1>References & Planning Documents</h1>
+      <p class="sub">All project planning artifacts, design specifications, and external resource links.</p>
+    </section>
+
+    <section class="section">
+      <h2>Planning Documents</h2>
+      <div style="overflow-x:auto;">
+        <table class="ref-table">
+          <thead>
+            <tr>
+              <th>Document</th>
+              <th>Category</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><a href="md/unified-prd-wave-survival.md" target="_blank">Unified PRD — Wave Survival</a></td>
+              <td><span class="badge badge-plan">PRD</span></td>
+              <td>Approved planning baseline. Product vision, experience pillars, scope, spawn algorithm, combat design, HUD spec, map requirements.</td>
+            </tr>
+            <tr>
+              <td><a href="md/game-design-document.md" target="_blank">Game Design Document</a></td>
+              <td><span class="badge badge-plan">GDD</span></td>
+              <td>Core architecture — maps, domain model, entity relationships, UI framework, and remaining work checklist.</td>
+            </tr>
+            <tr>
+              <td><a href="md/expert-critique.md" target="_blank">Expert Critique</a></td>
+              <td><span class="badge badge-plan">Review</span></td>
+              <td>Architecture review — coupling risks, tooling priorities, test strategy, and mitigation recommendations.</td>
+            </tr>
+            <tr>
+              <td><a href="md/vertical-slice-roadmap.md" target="_blank">Vertical Slice Roadmap</a></td>
+              <td><span class="badge badge-plan">Roadmap</span></td>
+              <td>Slices 0-3 dependency map, scope definitions, go/no-go gates, and risk mitigations.</td>
+            </tr>
+            <tr>
+              <td><a href="md/mvp-status-report.md" target="_blank">MVP Status Report</a></td>
+              <td><span class="badge badge-md">Status</span></td>
+              <td>Cycle 1 build report — what was built, controls, known issues, and Cycle 2 priorities.</td>
+            </tr>
+            <tr>
+              <td><a href="md/agent-swarm-handoff.md" target="_blank">Agent Swarm Handoff</a></td>
+              <td><span class="badge badge-plan">Handoff</span></td>
+              <td>Expert deliverables — architecture validation, tooling, slice sequencing, external expert packet, menu direction.</td>
+            </tr>
+            <tr>
+              <td><a href="md/agent-swarm-build-handoff-prompt.md" target="_blank">Swarm Build Handoff Prompt</a></td>
+              <td><span class="badge badge-plan">Prompt</span></td>
+              <td>Copy/paste prompt for running a planning+alignment swarm before implementation.</td>
+            </tr>
+            <tr>
+              <td><a href="md/game-design-expert-handoff.md" target="_blank">Game Design Expert Handoff</a></td>
+              <td><span class="badge badge-plan">Handoff</span></td>
+              <td>Pre-production expert pass — confirmed findings baseline, asset constraints, licensing obligations.</td>
+            </tr>
+            <tr>
+              <td><a href="md/external-expert-prompt.md" target="_blank">External Expert Prompt</a></td>
+              <td><span class="badge badge-plan">Prompt</span></td>
+              <td>Polished prompt for soliciting external game design review with structured response format.</td>
+            </tr>
+            <tr>
+              <td><a href="md/menu-direction-brief.md" target="_blank">Menu Direction Brief</a></td>
+              <td><span class="badge badge-plan">Brief</span></td>
+              <td>Locked menu UX direction — visual style, navigation model, accessibility, persistence.</td>
+            </tr>
+            <tr>
+              <td><a href="md/zombies-wave-map-mockups-design.md" target="_blank">Map Mockups Design Spec</a></td>
+              <td><span class="badge badge-plan">Design</span></td>
+              <td>Technical specification backing the wave map mockups — texture legend, gameplay flow, vertical layers.</td>
+            </tr>
+            <tr>
+              <td><a href="md/cycle-2-handoff-prompt.md" target="_blank">Cycle 2 Handoff</a></td>
+              <td><span class="badge badge-plan">Handoff</span></td>
+              <td>Cycle 2 implementation instructions — audio download, map expansion, bug fixes.</td>
+            </tr>
+            <tr>
+              <td><a href="md/cycle-3-handoff-prompt.md" target="_blank">Cycle 3 Handoff</a></td>
+              <td><span class="badge badge-plan">Handoff</span></td>
+              <td>Cycle 3 scope — power-ups, additional maps, polish.</td>
+            </tr>
+            <tr>
+              <td><a href="md/cycle-4-handoff-prompt.md" target="_blank">Cycle 4 Handoff</a></td>
+              <td><span class="badge badge-plan">Handoff</span></td>
+              <td>Cycle 4 scope — final polish, web export, deployment prep.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Design Documents (In This Site)</h2>
+      <div style="overflow-x:auto;">
+        <table class="ref-table">
+          <thead>
+            <tr>
+              <th>Document</th>
+              <th>Type</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><a href="ui-assets-gallery.html">3D Asset Gallery</a></td>
+              <td><span class="badge badge-html">Interactive</span></td>
+              <td>Rotatable 3D models for all characters, skeletons, weapons. Full animation library with click-to-preview.</td>
+            </tr>
+            <tr>
+              <td><a href="audio-asset-gallery.html">Audio Asset Gallery</a></td>
+              <td><span class="badge badge-html">Interactive</span></td>
+              <td>Embedded Freesound players for all 24 audio assets. Bus layout diagram, trigger wiring table, options menu mockup.</td>
+            </tr>
+            <tr>
+              <td><a href="menu-hud-mockups.html">Menu & HUD Mockups</a></td>
+              <td><span class="badge badge-html">Interactive</span></td>
+              <td>Main menu, pause menu, options with draggable sliders, HUD with health/stamina/timer.</td>
+            </tr>
+            <tr>
+              <td><a href="wave-map-mockups.html">Wave Map Mockups</a></td>
+              <td><span class="badge badge-html">Interactive</span></td>
+              <td>SVG floor plans and vertical cross-sections for maps A (1 entrance), B (2), and C (3).</td>
+            </tr>
+            <tr>
+              <td><a href="audio-design.html">Audio Design Spec</a></td>
+              <td><span class="badge badge-md">Spec</span></td>
+              <td>Full audio specification with bus layout, trigger wiring, AudioManager API, settings persistence.</td>
+            </tr>
+            <tr>
+              <td><a href="powerup-design.html">Power-Up Design Spec</a></td>
+              <td><span class="badge badge-md">Spec</span></td>
+              <td>Three power-ups with drop mechanics, buff tracking, HUD integration, player script changes.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>External Asset Sources</h2>
+      <div style="overflow-x:auto;">
+        <table class="ref-table">
+          <thead>
+            <tr>
+              <th>Asset</th>
+              <th>Source</th>
+              <th>License</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>KayKit Adventurers 2.0</td>
+              <td><a href="https://kaylousberg.itch.io/kaykit-adventurers" target="_blank">itch.io</a></td>
+              <td>CC0</td>
+            </tr>
+            <tr>
+              <td>KayKit Skeletons 1.1</td>
+              <td><a href="https://kaylousberg.itch.io/kaykit-skeleton-pack" target="_blank">itch.io</a> · <a href="https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Skeletons-1.0" target="_blank">GitHub</a></td>
+              <td>CC0</td>
+            </tr>
+            <tr>
+              <td>KayKit Character Animations 1.1</td>
+              <td><a href="https://kaylousberg.itch.io/kaykit-character-animations" target="_blank">itch.io</a></td>
+              <td>CC0</td>
+            </tr>
+            <tr>
+              <td>Kenney Prototype Textures</td>
+              <td><a href="https://www.kenney.nl/assets/prototype-textures" target="_blank">kenney.nl</a> · <a href="https://kenney-assets.itch.io/prototype-textures" target="_blank">itch.io</a></td>
+              <td>CC0</td>
+            </tr>
+            <tr>
+              <td>Monogram Font</td>
+              <td><a href="https://datagoblin.itch.io/monogram" target="_blank">itch.io</a></td>
+              <td>CC0</td>
+            </tr>
+            <tr>
+              <td>PS4 Buttons — Premium Assets</td>
+              <td><a href="https://arks.itch.io/ps4-buttons" target="_blank">itch.io</a></td>
+              <td>CC-BY 4.0 (attribution required)</td>
+            </tr>
+            <tr>
+              <td>Freesound Audio Assets (24 sounds)</td>
+              <td><a href="https://freesound.org" target="_blank">freesound.org</a></td>
+              <td>CC0 (20) / CC-BY 4.0 (4)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Technology</h2>
+      <div style="overflow-x:auto;">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Tool</th><th>Version</th><th>Purpose</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Godot Engine</td><td>4.6</td><td>Game engine — Forward+ renderer, GDScript</td></tr>
+            <tr><td>GDScript</td><td>4.x</td><td>Primary scripting language</td></tr>
+            <tr><td>model-viewer</td><td>4.0</td><td>3D model previews in design docs (web component)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer">GankMid.co — Wave Survival Prototype — Godot 4.6</footer>
+</body>
+</html>

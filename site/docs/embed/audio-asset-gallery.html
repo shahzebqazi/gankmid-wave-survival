@@ -1,0 +1,773 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Audio Design Document — Sound &amp; Music</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0e1218;
+      --panel: #171d27;
+      --panel-alt: #1d2431;
+      --border: #313c4f;
+      --text: #e8eef8;
+      --muted: #9aa9be;
+      --accent: #78a6ff;
+      --danger: #ff4a66;
+      --warn: #ffad33;
+      --ok: #4ce39a;
+      --music: #a78bfa;
+      --player-sfx: #f59e0b;
+      --skeleton-sfx: #ef4444;
+      --ui-sfx: #06b6d4;
+      --ambient: #10b981;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 14px/1.45 Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    h1, h2, h3, h4 { margin: 0 0 8px; }
+    p { margin: 0; }
+
+    .hero {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .hero h1 { font-size: 24px; letter-spacing: 0.3px; }
+    .sub { color: var(--muted); margin-top: 4px; margin-bottom: 10px; }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .chip {
+      border: 1px solid #44526a;
+      color: #cfdbf0;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 12px;
+      background: #1b2230;
+    }
+
+    /* ---- Nav ---- */
+    .nav {
+      display: flex; gap: 6px; flex-wrap: wrap;
+      margin-bottom: 20px;
+      position: sticky; top: 0; z-index: 10;
+      background: var(--bg);
+      padding: 10px 0 6px;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav a {
+      display: inline-block;
+      padding: 5px 12px;
+      border-radius: 99px;
+      font-size: 12px;
+      text-decoration: none;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      background: var(--panel);
+      transition: all 0.15s;
+    }
+    .nav a:hover { border-color: var(--accent); color: var(--text); background: var(--panel-alt); }
+    .nav a[data-cat="music"]    { border-color: color-mix(in srgb, var(--music) 50%, transparent); color: var(--music); }
+    .nav a[data-cat="player"]   { border-color: color-mix(in srgb, var(--player-sfx) 50%, transparent); color: var(--player-sfx); }
+    .nav a[data-cat="skeleton"] { border-color: color-mix(in srgb, var(--skeleton-sfx) 50%, transparent); color: var(--skeleton-sfx); }
+    .nav a[data-cat="ui"]       { border-color: color-mix(in srgb, var(--ui-sfx) 50%, transparent); color: var(--ui-sfx); }
+    .nav a[data-cat="ambient"]  { border-color: color-mix(in srgb, var(--ambient) 50%, transparent); color: var(--ambient); }
+    .nav a[data-cat="system"]   { border-color: color-mix(in srgb, var(--accent) 50%, transparent); color: var(--accent); }
+
+    /* ---- Shared section ---- */
+    .section-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 16px;
+      scroll-margin-top: 60px;
+    }
+    .section-card > h2 {
+      font-size: 17px;
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+
+    /* ---- Bus diagram ---- */
+    .bus-diagram { margin: 0 auto; }
+    .bus-diagram svg { display: block; width: 100%; max-width: 900px; height: auto; margin: 0 auto; }
+
+    /* ---- File tree ---- */
+    .file-tree {
+      background: #111622;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      font: 13px/1.7 "JetBrains Mono", "Fira Code", "Cascadia Code", Consolas, monospace;
+      color: var(--muted);
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .file-tree .dir  { color: var(--accent); }
+    .file-tree .file { color: #d0d8e8; }
+    .file-tree .mus  { color: var(--music); }
+    .file-tree .sfx  { color: var(--player-sfx); }
+    .file-tree .ui   { color: var(--ui-sfx); }
+    .file-tree .env  { color: var(--ambient); }
+
+    /* ---- Trigger table ---- */
+    .trigger-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .trigger-table th {
+      text-align: left;
+      padding: 6px 10px;
+      border-bottom: 2px solid var(--border);
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .trigger-table td {
+      padding: 6px 10px;
+      border-bottom: 1px solid rgba(49,60,79,0.5);
+      vertical-align: top;
+    }
+    .trigger-table tr:hover td { background: rgba(120,166,255,0.04); }
+    .trigger-table code {
+      font-size: 12px;
+      background: rgba(0,0,0,0.25);
+      padding: 1px 5px;
+      border-radius: 4px;
+      color: #c9d7ef;
+    }
+    .trigger-table .script-col { color: var(--accent); font-weight: 500; }
+
+    /* ---- Options slider mock ---- */
+    .options-mock {
+      background: var(--panel-alt);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 20px;
+      max-width: 420px;
+    }
+    .options-mock .title { font-size: 16px; font-weight: 700; color: #d6e5ff; letter-spacing: 0.5px; margin-bottom: 14px; }
+
+    .slider-group { margin-bottom: 12px; }
+    .slider-label { display: flex; justify-content: space-between; font-size: 12px; color: #cad4e3; margin-bottom: 4px; }
+    .slider-val { color: var(--accent); font-weight: 600; min-width: 24px; text-align: right; font-variant-numeric: tabular-nums; }
+    .slider-track {
+      width: 100%; height: 10px;
+      background: #111827;
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      position: relative;
+      cursor: pointer;
+      user-select: none;
+    }
+    .slider-fill { height: 100%; border-radius: 99px; transition: width 0.05s; }
+    .slider-fill.master { background: linear-gradient(90deg, #a78bfa, #7c3aed); }
+    .slider-fill.music  { background: linear-gradient(90deg, #90cdf4, #599de3); }
+    .slider-fill.sfx    { background: linear-gradient(90deg, #f6ad55, #dd6b20); }
+    .slider-thumb {
+      position: absolute; top: 50%; transform: translate(-50%, -50%);
+      width: 14px; height: 14px; border-radius: 50%;
+      background: #edf2f7; border: 2px solid var(--accent);
+      box-shadow: 0 0 6px rgba(100,168,255,0.4);
+      pointer-events: none;
+    }
+    .toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; font-size: 12px; color: #cad4e3; }
+    .toggle-pill {
+      width: 36px; height: 18px; border-radius: 99px;
+      background: var(--ok); position: relative; cursor: pointer; transition: background 0.15s;
+    }
+    .toggle-pill.off { background: #374151; }
+    .toggle-pill::after {
+      content: ''; position: absolute; top: 2px; left: 20px;
+      width: 14px; height: 14px; border-radius: 50%; background: #edf2f7; transition: left 0.15s;
+    }
+    .toggle-pill.off::after { left: 2px; }
+    .btn-row { display: flex; gap: 8px; margin-top: 14px; }
+    .btn-mock {
+      flex: 1; padding: 7px 10px; font-size: 12px;
+      border: 1px solid var(--border); border-radius: 8px;
+      background: rgba(255,255,255,0.04); color: #cad4e3; text-align: center; cursor: pointer;
+    }
+    .btn-mock:hover { border-color: var(--accent); color: #eaf2ff; }
+    .btn-mock.primary { border-color: var(--accent); background: rgba(100,168,255,0.14); color: #eaf2ff; }
+    .prompt-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+    .prompt-tag {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+      border-radius: 99px; padding: 3px 8px; font-size: 11px; color: var(--muted);
+    }
+
+    /* ---- Sound cards ---- */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 12px;
+    }
+    .card {
+      background: var(--panel-alt);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      transition: border-color 0.15s;
+    }
+    .card:hover { border-color: rgba(120,166,255,0.35); }
+    .card-header {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .card-header h3 { font-size: 13px; font-weight: 600; }
+    .card-id {
+      font-size: 10px; color: var(--muted);
+      background: rgba(0,0,0,0.3); padding: 2px 7px; border-radius: 99px;
+      font-family: "JetBrains Mono", Consolas, monospace;
+    }
+    .card-body { padding: 10px 12px; }
+    .card-meta { display: grid; grid-template-columns: auto 1fr; gap: 3px 8px; font-size: 12px; margin-bottom: 8px; }
+    .card-meta dt { color: var(--muted); }
+    .card-meta dd { color: var(--text); }
+    .card-desc { font-size: 12px; color: var(--muted); margin-bottom: 8px; line-height: 1.5; }
+
+    .license-tag { display: inline-block; font-size: 10px; padding: 2px 7px; border-radius: 99px; font-weight: 600; }
+    .license-cc0  { background: rgba(76,227,154,0.12); color: var(--ok); border: 1px solid rgba(76,227,154,0.25); }
+    .license-ccby { background: rgba(255,173,51,0.12); color: var(--warn); border: 1px solid rgba(255,173,51,0.25); }
+
+    .player-row { margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(49,60,79,0.5); }
+    .player-row iframe { border: none; border-radius: 6px; width: 100%; height: 30px; }
+    .alt-link { display: inline-block; margin-top: 5px; font-size: 11px; color: var(--accent); text-decoration: none; }
+    .alt-link:hover { text-decoration: underline; }
+
+    .alt-options { margin-top: 6px; padding-top: 6px; border-top: 1px dashed rgba(49,60,79,0.4); }
+    .alt-options summary { font-size: 11px; color: var(--muted); cursor: pointer; }
+    .alt-options summary:hover { color: var(--text); }
+    .alt-item { margin-top: 5px; padding: 5px 7px; background: rgba(0,0,0,0.12); border-radius: 6px; }
+    .alt-item iframe { border: none; border-radius: 4px; width: 100%; height: 30px; margin-top: 3px; }
+    .alt-name { font-size: 12px; color: var(--text); }
+    .alt-meta { font-size: 11px; color: var(--muted); }
+
+    /* ---- Attribution ---- */
+    .attrib-block pre {
+      background: #111622; border: 1px solid var(--border); border-radius: 8px;
+      padding: 12px; font-size: 12px; color: var(--muted);
+      overflow-x: auto; white-space: pre-wrap; word-break: break-word;
+    }
+
+    /* ---- Stats bar ---- */
+    .stats { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
+    .stat {
+      background: var(--panel-alt); border: 1px solid var(--border); border-radius: 8px;
+      padding: 8px 14px; text-align: center; min-width: 100px;
+    }
+    .stat .num { font-size: 22px; font-weight: 700; color: var(--accent); }
+    .stat .lbl { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+    /* ---- Code block ---- */
+    .code-block {
+      background: #111622; border: 1px solid var(--border); border-radius: 8px;
+      padding: 12px 14px; font: 12px/1.6 "JetBrains Mono", Consolas, monospace;
+      color: #c9d7ef; overflow-x: auto; white-space: pre;
+    }
+    .code-block .kw { color: var(--music); }
+    .code-block .fn { color: var(--accent); }
+    .code-block .str { color: var(--ok); }
+    .code-block .cm { color: #5c6b82; }
+
+    /* ---- Layout helpers ---- */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 800px) { .two-col { grid-template-columns: 1fr; } }
+    .mt { margin-top: 14px; }
+    .note { font-size: 12px; color: var(--muted); line-height: 1.6; }
+    .note strong { color: #d8e6ff; }
+  </style>
+</head>
+<body>
+  <main class="container">
+
+    <!-- ===== HERO ===== -->
+    <section class="hero">
+      <h1>Audio Design Document</h1>
+      <p class="sub">Sound and music specification for the dungeon wave-survival prototype. All assets sourced from Freesound.org under Creative Commons licenses.</p>
+      <div class="chips">
+        <span class="chip">24 Sound Assets</span>
+        <span class="chip">5 Audio Buses</span>
+        <span class="chip">20 CC0 / 4 CC-BY</span>
+        <span class="chip">Format: .ogg Vorbis</span>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="num">4</div><div class="lbl">Music Tracks</div></div>
+        <div class="stat"><div class="num">8</div><div class="lbl">Player SFX</div></div>
+        <div class="stat"><div class="num">6</div><div class="lbl">Skeleton SFX</div></div>
+        <div class="stat"><div class="num">4</div><div class="lbl">UI SFX</div></div>
+        <div class="stat"><div class="num">2</div><div class="lbl">Ambient</div></div>
+      </div>
+    </section>
+
+    <!-- ===== NAV ===== -->
+    <nav class="nav">
+      <a href="#bus-layout" data-cat="system">Bus Layout</a>
+      <a href="#music" data-cat="music">Music</a>
+      <a href="#player-sfx" data-cat="player">Player SFX</a>
+      <a href="#skeleton-sfx" data-cat="skeleton">Skeleton SFX</a>
+      <a href="#ui-sfx" data-cat="ui">UI SFX</a>
+      <a href="#ambient" data-cat="ambient">Ambient</a>
+      <a href="#trigger-wiring" data-cat="system">Trigger Wiring</a>
+      <a href="#options-menu" data-cat="system">Options Menu</a>
+      <a href="#file-structure" data-cat="system">File Structure</a>
+      <a href="#attribution" data-cat="system">Attribution</a>
+    </nav>
+
+    <!-- ===== BUS LAYOUT ===== -->
+    <section class="section-card" id="bus-layout">
+      <h2><span class="dot" style="background:var(--accent)"></span> Audio Bus Layout</h2>
+      <div class="bus-diagram">
+        <svg viewBox="0 0 900 310" aria-label="Audio bus routing diagram">
+          <defs>
+            <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+              <polygon points="0 0,8 3,0 6" fill="#5a6b88"/>
+            </marker>
+          </defs>
+          <!-- Master -->
+          <rect x="370" y="230" width="160" height="50" rx="10" fill="#1d2431" stroke="#78a6ff" stroke-width="2"/>
+          <text x="450" y="260" text-anchor="middle" fill="#78a6ff" font-size="14" font-weight="700">MASTER</text>
+          <text x="450" y="275" text-anchor="middle" fill="#6b7f9e" font-size="10">0 dB</text>
+
+          <!-- Music -->
+          <rect x="50" y="30" width="150" height="46" rx="8" fill="#1d2431" stroke="#a78bfa" stroke-width="1.5"/>
+          <text x="125" y="55" text-anchor="middle" fill="#a78bfa" font-size="13" font-weight="600">Music</text>
+          <text x="125" y="69" text-anchor="middle" fill="#6b7f9e" font-size="10">-6 dB  mus_*</text>
+          <line x1="125" y1="76" x2="125" y2="140" stroke="#5a6b88" stroke-width="1.5"/>
+          <line x1="125" y1="140" x2="420" y2="230" stroke="#5a6b88" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+          <!-- SFX -->
+          <rect x="250" y="30" width="150" height="46" rx="8" fill="#1d2431" stroke="#f59e0b" stroke-width="1.5"/>
+          <text x="325" y="55" text-anchor="middle" fill="#f59e0b" font-size="13" font-weight="600">SFX</text>
+          <text x="325" y="69" text-anchor="middle" fill="#6b7f9e" font-size="10">-3 dB  sfx_*</text>
+          <line x1="325" y1="76" x2="325" y2="160" stroke="#5a6b88" stroke-width="1.5"/>
+          <line x1="325" y1="160" x2="440" y2="230" stroke="#5a6b88" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+          <!-- UI -->
+          <rect x="500" y="30" width="150" height="46" rx="8" fill="#1d2431" stroke="#06b6d4" stroke-width="1.5"/>
+          <text x="575" y="55" text-anchor="middle" fill="#06b6d4" font-size="13" font-weight="600">UI</text>
+          <text x="575" y="69" text-anchor="middle" fill="#6b7f9e" font-size="10">-3 dB  sfx_ui_*</text>
+          <line x1="575" y1="76" x2="575" y2="160" stroke="#5a6b88" stroke-width="1.5"/>
+          <line x1="575" y1="160" x2="460" y2="230" stroke="#5a6b88" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+          <!-- Ambient -->
+          <rect x="700" y="30" width="150" height="46" rx="8" fill="#1d2431" stroke="#10b981" stroke-width="1.5"/>
+          <text x="775" y="55" text-anchor="middle" fill="#10b981" font-size="13" font-weight="600">Ambient</text>
+          <text x="775" y="69" text-anchor="middle" fill="#6b7f9e" font-size="10">-12 dB  sfx_ambient_*</text>
+          <line x1="775" y1="76" x2="775" y2="140" stroke="#5a6b88" stroke-width="1.5"/>
+          <line x1="775" y1="140" x2="480" y2="230" stroke="#5a6b88" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+          <!-- Ducking note -->
+          <rect x="50" y="105" width="150" height="28" rx="6" fill="rgba(167,139,250,0.1)" stroke="#a78bfa" stroke-width="1" stroke-dasharray="4,3"/>
+          <text x="125" y="123" text-anchor="middle" fill="#a78bfa" font-size="10">-6 dB duck on pause</text>
+
+          <!-- Output -->
+          <text x="450" y="300" text-anchor="middle" fill="#5a6b88" font-size="11">Speakers / Headphones</text>
+        </svg>
+      </div>
+      <p class="note mt"><strong>Ducking:</strong> When pause menu opens, the Music bus drops by -6 dB. Restored on resume.</p>
+    </section>
+
+    <!-- ===== MUSIC ===== -->
+    <section class="section-card" id="music">
+      <h2><span class="dot" style="background:var(--music)"></span> Music</h2>
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-header"><h3>Main Menu Theme</h3><span class="card-id">mus_menu</span></div>
+          <div class="card-body">
+            <dl class="card-meta">
+              <dt>File</dt><dd>menu_theme.ogg</dd>
+              <dt>Loop</dt><dd>Yes</dd>
+              <dt>Style</dt><dd>Dark ambient synth, brooding dungeon</dd>
+              <dt>Author</dt><dd>Kinoton</dd>
+              <dt>License</dt><dd><span class="license-tag license-cc0">CC0</span></dd>
+            </dl>
+            <p class="card-desc">Creepy dungeon cave soundscape — dark drone, low-frequency rumble, water dripping, slow air howling. 3:00 duration, perfect for looping menu background.</p>
+            <div class="player-row">
+              <iframe src="https://freesound.org/embed/sound/iframe/516566/simple/small/" loading="lazy"></iframe>
+              <a class="alt-link" href="https://freesound.org/people/Kinoton/sounds/516566/" target="_blank" rel="noopener">View on Freesound &#8594;</a>
+            </div>
+            <div class="alt-options"><details><summary>2 alternatives</summary>
+              <div class="alt-item"><span class="alt-name">Dark Ambient Loop &#8212; goulven</span><span class="alt-meta"> &middot; CC0 &middot; 31s loop &middot; cave/storm atmosphere</span><iframe src="https://freesound.org/embed/sound/iframe/371277/simple/small/" loading="lazy"></iframe></div>
+              <div class="alt-item"><span class="alt-name">Cave Ambience Loop &#8212; hushless</span><span class="alt-meta"> &middot; CC0 &middot; 1:16 &middot; game-ready immersive cave</span><iframe src="https://freesound.org/embed/sound/iframe/770379/simple/small/" loading="lazy"></iframe></div>
+            </details></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h3>Combat Loop A</h3><span class="card-id">mus_combat_01</span></div>
+          <div class="card-body">
+            <dl class="card-meta">
+              <dt>File</dt><dd>combat_loop_01.ogg</dd>
+              <dt>Loop</dt><dd>Yes</dd>
+              <dt>Style</dt><dd>Driving percussion, minor key, 120-140 BPM</dd>
+              <dt>Author</dt><dd>haydensayshi123</dd>
+              <dt>License</dt><dd><span class="license-tag license-cc0">CC0</span></dd>
+            </dl>
+            <p class="card-desc">Battle-march action loop &#8212; punchy, intense war march with driving drums. 11s seamless loop, 11.9K downloads.</p>
+            <div class="player-row">
+              <iframe src="https://freesound.org/embed/sound/iframe/138681/simple/small/" loading="lazy"></iframe>
+              <a class="alt-link" href="https://freesound.org/people/haydensayshi123/sounds/138681/" target="_blank" rel="noopener">View on Freesound &#8594;</a>
+            </div>
+            <div class="alt-options"><details><summary>1 alternative</summary>
+              <div class="alt-item"><span class="alt-name">"First Battle" Fantasy Combat Loop &#8212; ManuelGraf</span><span class="alt-meta"> &middot; CC-BY 4.0 &middot; 57s &middot; orchestral, 135 BPM, E minor</span><iframe src="https://freesound.org/embed/sound/iframe/808501/simple/small/" loading="lazy"></iframe></div>
+            </details></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h3>Wave Clear Sting</h3><span class="card-id">mus_wave_clear</span></div>
+          <div class="card-body">
+            <dl class="card-meta">
+              <dt>File</dt><dd>wave_clear_sting.ogg</dd>
+              <dt>Loop</dt><dd>No</dd>
+              <dt>Style</dt><dd>Short triumphant brass/strings, 2-4s</dd>
+              <dt>Author</dt><dd>xkeril</dd>
+              <dt>License</dt><dd><span class="license-tag license-cc0">CC0</span></dd>
+            </dl>
+            <p class="card-desc">Victory (short sting) &#8212; 6-second triumphant phrase with bells and piano. Signals wave completion.</p>
+            <div class="player-row">
+              <iframe src="https://freesound.org/embed/sound/iframe/706753/simple/small/" loading="lazy"></iframe>
+              <a class="alt-link" href="https://freesound.org/people/xkeril/sounds/706753/" target="_blank" rel="noopener">View on Freesound &#8594;</a>
+            </div>
+            <div class="alt-options"><details><summary>2 alternatives</summary>
+              <div class="alt-item"><span class="alt-name">Fanfare &#8212; bone666138</span><span class="alt-meta"> &middot; CC-BY 4.0 &middot; 3.2s &middot; medieval 3-trumpet fanfare</span><iframe src="https://freesound.org/embed/sound/iframe/198874/simple/small/" loading="lazy"></iframe></div>
+              <div class="alt-item"><span class="alt-name">Victory Fanfare &#8212; humanoide9000</span><span class="alt-meta"> &middot; CC-BY 4.0 &middot; 10.5s &middot; orchestral brass, grand cinematic</span><iframe src="https://freesound.org/embed/sound/iframe/466133/simple/small/" loading="lazy"></iframe></div>
+            </details></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h3>Game Over Sting</h3><span class="card-id">mus_game_over</span></div>
+          <div class="card-body">
+            <dl class="card-meta">
+              <dt>File</dt><dd>game_over_sting.ogg</dd>
+              <dt>Loop</dt><dd>No</dd>
+              <dt>Style</dt><dd>Descending somber melody, 3-5s</dd>
+              <dt>Author</dt><dd>LittleRobotSoundFactory</dd>
+              <dt>License</dt><dd><span class="license-tag license-ccby">CC-BY</span></dd>
+            </dl>
+            <p class="card-desc">Jingle_Lose_00 &#8212; dark orchestral lose jingle for fantasy games. ~5s, somber descending feel for death/game-over.</p>
+            <div class="player-row">
+              <iframe src="https://freesound.org/embed/sound/iframe/270467/simple/small/" loading="lazy"></iframe>
+              <a class="alt-link" href="https://freesound.org/people/LittleRobotSoundFactory/sounds/270467/" target="_blank" rel="noopener">View on Freesound &#8594;</a>
+            </div>
+            <div class="alt-options"><details><summary>1 alternative</summary>
+              <div class="alt-item"><span class="alt-name">Jingle_Lose_01 &#8212; LittleRobotSoundFactory</span><span class="alt-meta"> &middot; CC-BY 4.0 &middot; 8-bit retro lose jingle</span><iframe src="https://freesound.org/embed/sound/iframe/270334/simple/small/" loading="lazy"></iframe></div>
+            </details></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== PLAYER SFX ===== -->
+    <section class="section-card" id="player-sfx">
+      <h2><span class="dot" style="background:var(--player-sfx)"></span> Player Sound Effects</h2>
+      <div class="card-grid">
+        <div class="card"><div class="card-header"><h3>Footstep 01 (Stone)</h3><span class="card-id">sfx_player_footstep_01</span></div><div class="card-body"><dl class="card-meta"><dt>File</dt><dd>footstep_01.ogg</dd><dt>Trigger</dt><dd>Every ~0.35s while running</dd><dt>Author</dt><dd>Phil25</dd><dt>License</dt><dd><span class="license-tag license-cc0">CC0</span></dd></dl><p class="card-desc">Stone steps &#8212; walking on concrete, cleaned background noise. 8.6s recording, slice individual steps.</p><div class="player-row"><iframe src="https://freesound.org/embed/sound/iframe/208103/simple/small/" loading="lazy"></iframe><a class="alt-link" href="https://freesound.org/people/Phil25/sounds/208103/" target="_blank" rel="noopener">View on Freesound &#8594;</a></div></div></div>
+
+        <div class="card"><div class="card-header"><h3>Footstep 02 (Stone variant)</h3><span class="card-id">sfx_player_footstep_02</span></div><div class="card-body"><dl class="card-meta"><dt>File</dt><dd>footstep_02.ogg</dd><dt>Trigger</dt><dd>Alternated with footstep_01</dd><dt>Author</dt><dd>areniporgen</dd><dt>License</dt><dd><span class="license-tag license-cc0">CC0</span></dd></dl><p class="card-desc">Steps on concrete, indoor &#8212; 192kHz, noise-removed. Different tonal character for natural alternation.</p><div class="player-row"><iframe src="https://freesound.org/embed/sound/iframe/712084/simple/small/" loading="lazy"></iframe><a class="alt-link" href="https://freesound.org/people/areniporgen/sounds/712084/" target="_blank" rel="noopener">View on Freesound &#8594;</a></div></div></div>
+
+        <div class="card"><div class="card-header"><h3>Sword Swing</h3><span class="card-id">sfx_player_attack_swing</span></div><div class="card-body"><dl class="card-meta"><dt>File</dt><dd>sword_swing.ogg</dd><dt>Trigger</dt><dd>On attack_window start (0.3s in)</dd><dt>Author</dt><dd>Artninja</dd><dt>License</dt><dd><span class="license-tag license-ccby">CC-BY</span></dd></dl><p class="card-desc">Sword whoosh sound &#8212; custom metallic whoosh. 9s (trim to single swing).</p><div class="player-row"><iframe src="https://freesound.org/embed/sound/iframe/700220/simple/small/" loading="lazy"></iframe><a class="alt-link" href="https://freesound.org/people/Artninja/sounds/700220/" target="_blank" rel="noopener">View on Freesound &#8594;</a></div></div></div>
+
+        <div class="card"><div class="card-header"><h3>Sword Hit</h3><span class="card-id">sfx_player_attack_hit</span></div><div class="card-body"><dl class="card-meta"><dt>File</dt><dd>sword_hit.ogg</dd><dt>Trigger</dt><dd>When take_damage called on enemy</dd><dt>Author</dt><dd>CogFireStudios</dd><dt>License</dt><dd><span class="license-tag license-cc0">CC0</span></dd></dl><p class="card-desc">Hit Impact Sword 2 &#8212; heavy sword impact, meaty with metallic clang. 1.2s, game-ready.</p><div class="player-row"><iframe src="https://freesound.org/embed/sound/iframe/547036/simple/small/" loading="lazy"></iframe><a class="alt-link" href="https://freesound.org/people/CogFireStudios/sounds/547036/" target="_blank" rel="noopener">View on Freesound &#8594;</a></div><div class="alt-options"><details><summary>1 alternative</summary><div class="alt-item"><span class="alt-name">Sword Hit &#8212; qubodup</span><span class="alt-meta"> &middot; CC0 &middot; 0.76s &middot; lighter hit</span><iframe src="https://freesound.org/embed/sound/iframe/442769/simple/small/" loading="lazy"></iframe></div></details></div></div></div>
+
+        <div class="card"><div class="card-header"><h3>Shield Block</h3><span class="card-id">sfx_player_block</span></div><div class="card-body"><dl class="card-meta"><dt>File</dt><dd>shield_block.ogg</dd><dt>Trigger</dt><dd>Player takes damage while blocking</dd><dt>Author</dt><dd>CGEffex</dd><dt>License</dt><dd><span class="license-tag license-ccby">CC-BY</span></dd></dl><p class="card-desc">Metal Impact &#8212; bright metallic clang, 0.59s. Heavy shield rattle feel.</p><div class="player-row"><iframe src="https://freesound.org/embed/sound/iframe/97792/simple/small/" loading="lazy"></iframe><a class="alt-link" href="https://freesound.org/people/CGEffex/sounds/97792/" target="_blank" rel="noopener">View on Freesound &#8594;</a></div><div class="alt-options"><details><summary>1 alternative</summary><div class="alt-item"><span class="alt-name">Sword hit (low metal) &#8212; xkeril</span><span class="alt-meta"> &middot; CC0 &middot; heavier clang</span><iframe src="https://freesound.org/embed/sound/iframe/815763/simple/small/" loading="lazy"></iframe></div></details></div></div></div>
+
+        <div class="card"><div class="card-header"><h3>Player Hurt</h3><span class="card-id">sfx_player_hurt</span></div><div class="card-body"><dl class="card-meta"><dt>File</dt><dd>player_hurt.ogg</dd><dt>Trigger</dt><dd>Unblocked damage taken</dd><dt>Author</dt><dd>luminousfridge</dd><dt>License</dt><dd><span class="license-tag license-cc0">CC0</span></dd></dl><p class="card-desc">Short male exertion/pain grunt, 0.29s.</p><div class="player-row"><iframe src="https://freesound.org/embed/sound/iframe/561555/simple/small/" loading="lazy"></iframe><a class="alt-link" href="https://freesound.org/people/luminousfridge/sounds/561555/" target="_blank" rel="noopener">View on Freesound &#8594;</a></div></div></div>
+
+        <div class="card"><div class="card-header"><h3>Jump</h3><span class="card-id">sfx_player_jump</span></div><div class="card-body"><dl class="card-meta"><dt>File</dt><dd>jump.ogg</dd><dt>Trigger</dt><dd>On jump input</dd><dt>Author</dt><dd>SoftDistortionFX</dd><dt>License</dt><dd><span class="license-tag license-cc0">CC0</span></dd></dl><p class="card-desc">Concrete stomp &#8212; trim a single impact for jump launch sound.</p><div class="player-row"><iframe src="https://freesound.org/embed/sound/iframe/465299/simple/small/" loading="lazy"></iframe><a class="alt-link" href="https://freesound.org/people/SoftDistortionFX/sounds/465299/" target="_blank" rel="noopener">View on Freesound &#8594;</a></div></div></div>
+
+        <div class="card"><div class="card-header"><h3>Landing Thud</h3><span class="card-id">sfx_player_land</span></div><div class="card-body"><dl class="card-meta"><dt>File</dt><dd>land.ogg</dd><dt>Trigger</dt><dd>On landing (was_on_floor)</dd><dt>Author</dt><dd>000600</dd><dt>License</dt><dd><span class="license-tag license-cc0">CC0</span></dd></dl><p class="card-desc">BodyFall &#8212; heavy thump, 0.96s. Solid armored character landing.</p><div class="player-row"><iframe src="https://freesound.org/embed/sound/iframe/187136/simple/small/" loading="lazy"></iframe><a class="alt-link" href="https://freesound.org/people/000600/sounds/187136/" target="_blank" rel="noopener">View on Freesound &#8594;</a></div><div class="alt-options"><details><summary>1 alternative</summary><div class="alt-item"><span class="alt-name">BODY FALL - V HVY - DIRT &#8212; leonelmail</span><span class="alt-meta"> &middot; CC0 &middot; 1.6s &middot; heavy dirt fall</span><iframe src="https://freesound.org/embed/sound/iframe/504626/simple/small/" loading="lazy"></iframe></div></details></div></div></div>
+      </div>
+    </section>
+
+    <!-- ===== SKELETON SFX ===== -->
+    <section class="section-card" id="skeleton-sfx">
+      <h2><span class="dot" style="background:var(--skeleton-sfx)"></span> Skeleton Sound Effects</h2>
+      <div class="card-grid">
+        <div class="card"><div class="card-header"><h3>Skeleton Spawn</h3><span class="card-id">sfx_skeleton_spawn</span></div><div class="card-body"><dl class="card-meta"><dt>File</dt><dd>skeleton_spawn.ogg</dd><dt>Trigger</dt><dd>On spawn animation start</dd><dt>Author</dt><dd>spookymodem</dd><dt>License</dt><dd><span class="license-tag license-cc0">CC0</span></dd></dl><p class="card-desc">Rattling Bones &#8212; bones emerging and clattering, 5.5s. 8.9K downloads.</p><div class="player-row"><iframe src="https://freesound.org/embed/sound/iframe/202102/simple/small/" loading="lazy"></iframe><a class="alt-link" href="https://freesound.org/people/spookymodem/sounds/202102/" target="_blank" rel="noopener">View on Freesound &#8594;</a></div></div></div>
+
+        <div class="card"><div class="card-header"><h3>Skeleton Footstep</h3><span class="card-id">sfx_skeleton_footstep</span></div><div class="card-body"><dl class="card-meta"><dt>File</dt><dd>skeleton_step.ogg</dd><dt>Trigger</dt><dd>Every ~0.5s while walking</dd><dt>Author</dt><dd>cribbler</dd><dt>License</dt><dd><span class="license-tag license-cc0">CC0</span></dd></dl><p class="card-desc">Skeleton bones (game) &#8212; 0.8s bone/crumble on stone. Light bony tap.</p><div class="player-row"><iframe src="https://freesound.org/embed/sound/iframe/381859/simple/small/" loading="lazy"></iframe><a class="alt-link" href="https://freesound.org/people/cribbler/sounds/381859/" target="_blank" rel="noopener">View on Freesound &#8594;</a></div></div></div>
+
+        <div class="card"><div class="card-header"><h3>Skeleton Attack</h3><span class="card-id">sfx_skeleton_attack</span></div><div class="card-body"><dl class="card-meta"><dt>File</dt><dd>skeleton_attack.ogg</dd><dt>Trigger</dt><dd>On _try_attack</dd><dt>Author</dt><dd>xkeril</dd><dt>License</dt><dd><span class="license-tag license-cc0">CC0</span></dd></dl><p class="card-desc">Low metal scrape &#8212; heavy bone swipe, metallic crunch.</p><div class="player-row"><iframe src="https://freesound.org/embed/sound/iframe/815763/simple/small/" loading="lazy"></iframe><a class="alt-link" href="https://freesound.org/people/xkeril/sounds/815763/" target="_blank" rel="noopener">View on Freesound &#8594;</a></div></div></div>
+
+        <div class="card"><div class="card-header"><h3>Skeleton Hit (non-lethal)</h3><span class="card-id">sfx_skeleton_hit</span></div><div class="card-body"><dl class="card-meta"><dt>File</dt><dd>skeleton_hit.ogg</dd><dt>Trigger</dt><dd>On take_damage (non-lethal)</dd><dt>Author</dt><dd>qubodup</dd><dt>License</dt><dd><span class="license-tag license-cc0">CC0</span></dd></dl><p class="card-desc">Sword Hit (light) &#8212; 0.76s bone crack + rattle.</p><div class="player-row"><iframe src="https://freesound.org/embed/sound/iframe/442769/simple/small/" loading="lazy"></iframe><a class="alt-link" href="https://freesound.org/people/qubodup/sounds/442769/" target="_blank" rel="noopener">View on Freesound &#8594;</a></div></div></div>
+
+        <div class="card"><div class="card-header"><h3>Skeleton Death</h3><span class="card-id">sfx_skeleton_death</span></div><div class="card-body"><dl class="card-meta"><dt>File</dt><dd>skeleton_death.ogg</dd><dt>Trigger</dt><dd>On _die</dd><dt>Author</dt><dd>spookymodem</dd><dt>License</dt><dd><span class="license-tag license-cc0">CC0</span></dd></dl><p class="card-desc">Falling Bones &#8212; pile collapsing and scattering, 2.8s. 7.5K downloads.</p><div class="player-row"><iframe src="https://freesound.org/embed/sound/iframe/202091/simple/small/" loading="lazy"></iframe><a class="alt-link" href="https://freesound.org/people/spookymodem/sounds/202091/" target="_blank" rel="noopener">View on Freesound &#8594;</a></div></div></div>
+
+        <div class="card"><div class="card-header"><h3>Skeleton Aggro</h3><span class="card-id">sfx_skeleton_aggro</span></div><div class="card-body"><dl class="card-meta"><dt>File</dt><dd>skeleton_aggro.ogg</dd><dt>Trigger</dt><dd>First SPAWNING &#8594; CHASE</dd><dt>Author</dt><dd>giddster</dd><dt>License</dt><dd><span class="license-tag license-ccby">CC-BY</span></dd></dl><p class="card-desc">Death by Zombie &#8212; growls and hisses, 48s. Trim initial growl as aggro cue.</p><div class="player-row"><iframe src="https://freesound.org/embed/sound/iframe/416060/simple/small/" loading="lazy"></iframe><a class="alt-link" href="https://freesound.org/people/giddster/sounds/416060/" target="_blank" rel="noopener">View on Freesound &#8594;</a></div></div></div>
+      </div>
+    </section>
+
+    <!-- ===== UI SFX ===== -->
+    <section class="section-card" id="ui-sfx">
+      <h2><span class="dot" style="background:var(--ui-sfx)"></span> UI Sound Effects</h2>
+      <div class="card-grid">
+        <div class="card"><div class="card-header"><h3>Menu Navigate</h3><span class="card-id">sfx_ui_navigate</span></div><div class="card-body"><dl class="card-meta"><dt>File</dt><dd>ui_navigate.ogg</dd><dt>Trigger</dt><dd>Menu focus change</dd><dt>Author</dt><dd>suntemple</dd><dt>License</dt><dd><span class="license-tag license-cc0">CC0</span></dd></dl><p class="card-desc">SFX UI Button Click &#8212; procedural click, 0.16s. 6.7K downloads.</p><div class="player-row"><iframe src="https://freesound.org/embed/sound/iframe/253168/simple/small/" loading="lazy"></iframe><a class="alt-link" href="https://freesound.org/people/suntemple/sounds/253168/" target="_blank" rel="noopener">View on Freesound &#8594;</a></div></div></div>
+
+        <div class="card"><div class="card-header"><h3>Menu Confirm</h3><span class="card-id">sfx_ui_confirm</span></div><div class="card-body"><dl class="card-meta"><dt>File</dt><dd>ui_confirm.ogg</dd><dt>Trigger</dt><dd>Button press (Start, Resume)</dd><dt>Author</dt><dd>GameAudio</dd><dt>License</dt><dd><span class="license-tag license-cc0">CC0</span></dd></dl><p class="card-desc">Ping Bing &#8212; crisp, satisfying select chime.</p><div class="player-row"><iframe src="https://freesound.org/embed/sound/iframe/220206/simple/small/" loading="lazy"></iframe><a class="alt-link" href="https://freesound.org/people/GameAudio/packs/13940/" target="_blank" rel="noopener">View pack on Freesound &#8594;</a></div></div></div>
+
+        <div class="card"><div class="card-header"><h3>Menu Back</h3><span class="card-id">sfx_ui_back</span></div><div class="card-body"><dl class="card-meta"><dt>File</dt><dd>ui_back.ogg</dd><dt>Trigger</dt><dd>ESC / back action</dd><dt>Author</dt><dd>Breviceps</dd><dt>License</dt><dd><span class="license-tag license-cc0">CC0</span></dd></dl><p class="card-desc">Tic Toc Click &#8212; soft reverse-click variant.</p><div class="player-row"><iframe src="https://freesound.org/embed/sound/iframe/366104/simple/small/" loading="lazy"></iframe><a class="alt-link" href="https://freesound.org/people/Breviceps/packs/25371/" target="_blank" rel="noopener">View pack on Freesound &#8594;</a></div></div></div>
+
+        <div class="card"><div class="card-header"><h3>Pause</h3><span class="card-id">sfx_ui_pause</span></div><div class="card-body"><dl class="card-meta"><dt>File</dt><dd>ui_pause.ogg</dd><dt>Trigger</dt><dd>Pause menu open</dd><dt>Author</dt><dd>Kinoton</dd><dt>License</dt><dd><span class="license-tag license-cc0">CC0</span></dd></dl><p class="card-desc">Trim a short segment of the Dark Dungeon Ambience drone &#8212; low rumble + mute transition.</p><div class="player-row"><iframe src="https://freesound.org/embed/sound/iframe/516566/simple/small/" loading="lazy"></iframe><a class="alt-link" href="https://freesound.org/people/Kinoton/sounds/516566/" target="_blank" rel="noopener">View on Freesound &#8594;</a></div></div></div>
+      </div>
+    </section>
+
+    <!-- ===== AMBIENT ===== -->
+    <section class="section-card" id="ambient">
+      <h2><span class="dot" style="background:var(--ambient)"></span> Ambient / Environment</h2>
+      <div class="card-grid">
+        <div class="card"><div class="card-header"><h3>Dungeon Ambiance</h3><span class="card-id">sfx_ambient_dungeon</span></div><div class="card-body"><dl class="card-meta"><dt>File</dt><dd>ambient_dungeon.ogg</dd><dt>Trigger</dt><dd>Constant during gameplay</dd><dt>Author</dt><dd>Kinoton</dd><dt>License</dt><dd><span class="license-tag license-cc0">CC0</span></dd></dl><p class="card-desc">Dark Dungeon Ambience &#8212; wind, drips, low hum. 3:00 seamless loop. Dual-use: menu theme and ambient bed.</p><div class="player-row"><iframe src="https://freesound.org/embed/sound/iframe/516566/simple/small/" loading="lazy"></iframe><a class="alt-link" href="https://freesound.org/people/Kinoton/sounds/516566/" target="_blank" rel="noopener">View on Freesound &#8594;</a></div><div class="alt-options"><details><summary>1 alternative</summary><div class="alt-item"><span class="alt-name">Cave Ambience Loop &#8212; hushless</span><span class="alt-meta"> &middot; CC0 &middot; 1:16 &middot; game-ready dark cave</span><iframe src="https://freesound.org/embed/sound/iframe/770379/simple/small/" loading="lazy"></iframe></div></details></div></div></div>
+
+        <div class="card"><div class="card-header"><h3>Wave Start Horn</h3><span class="card-id">sfx_wave_start</span></div><div class="card-body"><dl class="card-meta"><dt>File</dt><dd>wave_horn.ogg</dd><dt>Trigger</dt><dd>On wave_started signal</dd><dt>Author</dt><dd>DeVern</dd><dt>License</dt><dd><span class="license-tag license-cc0">CC0</span></dd></dl><p class="card-desc">Distant War Horn &#8212; 19s medieval/tribal war horn. Ominous and foreboding. 3K downloads.</p><div class="player-row"><iframe src="https://freesound.org/embed/sound/iframe/512490/simple/small/" loading="lazy"></iframe><a class="alt-link" href="https://freesound.org/people/DeVern/sounds/512490/" target="_blank" rel="noopener">View on Freesound &#8594;</a></div><div class="alt-options"><details><summary>1 alternative</summary><div class="alt-item"><span class="alt-name">Battle Horn &#8212; Porphyr</span><span class="alt-meta"> &middot; CC-BY 4.0 &middot; 12s &middot; sinister medieval fantasy</span><iframe src="https://freesound.org/embed/sound/iframe/188815/simple/small/" loading="lazy"></iframe></div></details></div></div></div>
+      </div>
+    </section>
+
+    <!-- ===== TRIGGER WIRING ===== -->
+    <section class="section-card" id="trigger-wiring">
+      <h2><span class="dot" style="background:var(--accent)"></span> Trigger Wiring Reference</h2>
+      <p class="note" style="margin-bottom:12px;">Which script plays which sound, and when.</p>
+      <div style="overflow-x:auto;">
+        <table class="trigger-table">
+          <thead>
+            <tr><th>Script</th><th>Sound ID</th><th>Trigger</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="script-col" rowspan="3">main_menu.gd</td><td><code>mus_menu</code></td><td>On _ready()</td></tr>
+            <tr><td><code>sfx_ui_confirm</code></td><td>Start Game pressed</td></tr>
+            <tr><td><code>sfx_ui_navigate</code></td><td>Button focus change</td></tr>
+
+            <tr><td class="script-col" rowspan="3">pause_menu.gd</td><td><code>sfx_ui_pause</code></td><td>Pause menu opens</td></tr>
+            <tr><td><code>sfx_ui_confirm</code></td><td>Resume pressed</td></tr>
+            <tr><td>Music bus duck</td><td>-6 dB while paused</td></tr>
+
+            <tr><td class="script-col" rowspan="7">player.gd</td><td><code>sfx_player_footstep_01/02</code></td><td>Alternating, every ~0.35s while running</td></tr>
+            <tr><td><code>sfx_player_attack_swing</code></td><td>Attack window start</td></tr>
+            <tr><td><code>sfx_player_attack_hit</code></td><td>Enemy take_damage called</td></tr>
+            <tr><td><code>sfx_player_block</code></td><td>Blocked hit received</td></tr>
+            <tr><td><code>sfx_player_hurt</code></td><td>Unblocked damage taken</td></tr>
+            <tr><td><code>sfx_player_jump</code></td><td>Jump input</td></tr>
+            <tr><td><code>sfx_player_land</code></td><td>was_on_floor transition</td></tr>
+
+            <tr><td class="script-col" rowspan="6">skeleton_enemy.gd</td><td><code>sfx_skeleton_spawn</code></td><td>Spawn animation start</td></tr>
+            <tr><td><code>sfx_skeleton_footstep</code></td><td>Every ~0.5s while walking</td></tr>
+            <tr><td><code>sfx_skeleton_attack</code></td><td>_try_attack called</td></tr>
+            <tr><td><code>sfx_skeleton_hit</code></td><td>take_damage (non-lethal)</td></tr>
+            <tr><td><code>sfx_skeleton_death</code></td><td>_die called</td></tr>
+            <tr><td><code>sfx_skeleton_aggro</code></td><td>First SPAWNING &#8594; CHASE</td></tr>
+
+            <tr><td class="script-col" rowspan="2">wave_director.gd</td><td><code>sfx_wave_start</code></td><td>wave_started signal</td></tr>
+            <tr><td><code>mus_wave_clear</code></td><td>wave_cleared signal</td></tr>
+
+            <tr><td class="script-col" rowspan="2">game_state.gd</td><td><code>mus_combat_01</code></td><td>Phase &#8594; PLAYING</td></tr>
+            <tr><td><code>mus_game_over</code></td><td>Phase &#8594; GAME_OVER</td></tr>
+
+            <tr><td class="script-col">map_base.gd</td><td><code>sfx_ambient_dungeon</code></td><td>_ready() &#8212; loop</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===== OPTIONS MENU ===== -->
+    <section class="section-card" id="options-menu">
+      <h2><span class="dot" style="background:var(--accent)"></span> Options Menu &#8212; Volume Sliders</h2>
+      <div class="two-col">
+        <div>
+          <p class="note" style="margin-bottom:12px;">Accessible from Main Menu and Pause Menu. Changes apply in real-time. Settings persist to <code style="font-size:12px;background:rgba(0,0,0,.25);padding:1px 5px;border-radius:4px;color:#c9d7ef;">user://settings.cfg</code>.</p>
+          <div class="options-mock">
+            <div class="title">OPTIONS</div>
+            <div class="slider-group">
+              <div class="slider-label"><span>Master Volume</span><span class="slider-val" id="master-val">80</span></div>
+              <div class="slider-track" data-slider="master" data-default="80"><div class="slider-fill master" style="width:80%"></div><div class="slider-thumb" style="left:80%"></div></div>
+            </div>
+            <div class="slider-group">
+              <div class="slider-label"><span>Music Volume</span><span class="slider-val" id="music-val">70</span></div>
+              <div class="slider-track" data-slider="music" data-default="70"><div class="slider-fill music" style="width:70%"></div><div class="slider-thumb" style="left:70%"></div></div>
+            </div>
+            <div class="slider-group">
+              <div class="slider-label"><span>SFX Volume</span><span class="slider-val" id="sfx-val">80</span></div>
+              <div class="slider-track" data-slider="sfx" data-default="80"><div class="slider-fill sfx" style="width:80%"></div><div class="slider-thumb" style="left:80%"></div></div>
+            </div>
+            <div class="toggle-row"><span>Fullscreen</span><div class="toggle-pill" id="toggle-fullscreen"></div></div>
+            <div class="btn-row">
+              <div class="btn-mock primary" id="btn-reset">Reset Defaults</div>
+              <div class="btn-mock" id="btn-back">Back</div>
+            </div>
+            <div class="prompt-bar">
+              <span class="prompt-tag">[&#8592;/&#8594;] Adjust</span>
+              <span class="prompt-tag">[ENTER] Apply</span>
+              <span class="prompt-tag">[ESC] Back</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h4 style="margin-bottom:8px;">Godot Implementation</h4>
+          <div class="code-block"><span class="cm"># AudioManager.set_bus_volume()</span>
+<span class="kw">func</span> <span class="fn">set_bus_volume</span>(bus_name: String, linear_0_100: float) -> void:
+    <span class="kw">var</span> idx := AudioServer.get_bus_index(bus_name)
+    <span class="kw">if</span> idx == -1:
+        <span class="kw">return</span>
+    <span class="kw">var</span> db := linear_to_db(linear_0_100 / 100.0)
+    AudioServer.set_bus_volume_db(idx, db)
+    AudioServer.set_bus_mute(idx, linear_0_100 < 1.0)
+
+<span class="cm"># Settings persistence</span>
+<span class="kw">func</span> <span class="fn">save_settings</span>() -> void:
+    <span class="kw">var</span> cfg := ConfigFile.new()
+    cfg.set_value(<span class="str">"audio"</span>, <span class="str">"master"</span>, _master)
+    cfg.set_value(<span class="str">"audio"</span>, <span class="str">"music"</span>, _music)
+    cfg.set_value(<span class="str">"audio"</span>, <span class="str">"sfx"</span>, _sfx)
+    cfg.save(<span class="str">"user://settings.cfg"</span>)</div>
+          <p class="note mt"><strong>Bus routing:</strong> UI bus tracks SFX at 1:1. Ambient bus tracks SFX at 0.5&times;. Only 3 sliders exposed to keep the menu simple.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== FILE STRUCTURE ===== -->
+    <section class="section-card" id="file-structure">
+      <h2><span class="dot" style="background:var(--accent)"></span> File Structure</h2>
+      <div class="file-tree"><span class="dir">project/assets/audio/</span>
+├── <span class="dir">music/</span>
+│   ├── <span class="mus">menu_theme.ogg</span>          <span class="cm">← Kinoton #516566</span>
+│   ├── <span class="mus">combat_loop_01.ogg</span>      <span class="cm">← haydensayshi123 #138681</span>
+│   ├── <span class="mus">wave_clear_sting.ogg</span>    <span class="cm">← xkeril #706753</span>
+│   └── <span class="mus">game_over_sting.ogg</span>     <span class="cm">← LittleRobotSoundFactory #270467</span>
+├── <span class="dir">sfx/</span>
+│   ├── <span class="dir">player/</span>
+│   │   ├── <span class="sfx">footstep_01.ogg</span>     <span class="cm">← Phil25 #208103</span>
+│   │   ├── <span class="sfx">footstep_02.ogg</span>     <span class="cm">← areniporgen #712084</span>
+│   │   ├── <span class="sfx">sword_swing.ogg</span>     <span class="cm">← Artninja #700220</span>
+│   │   ├── <span class="sfx">sword_hit.ogg</span>       <span class="cm">← CogFireStudios #547036</span>
+│   │   ├── <span class="sfx">shield_block.ogg</span>    <span class="cm">← CGEffex #97792</span>
+│   │   ├── <span class="sfx">player_hurt.ogg</span>     <span class="cm">← luminousfridge #561555</span>
+│   │   ├── <span class="sfx">jump.ogg</span>            <span class="cm">← SoftDistortionFX #465299</span>
+│   │   └── <span class="sfx">land.ogg</span>            <span class="cm">← 000600 #187136</span>
+│   ├── <span class="dir">skeleton/</span>
+│   │   ├── <span class="sfx">skeleton_spawn.ogg</span>  <span class="cm">← spookymodem #202102</span>
+│   │   ├── <span class="sfx">skeleton_step.ogg</span>   <span class="cm">← cribbler #381859</span>
+│   │   ├── <span class="sfx">skeleton_attack.ogg</span> <span class="cm">← xkeril #815763</span>
+│   │   ├── <span class="sfx">skeleton_hit.ogg</span>    <span class="cm">← qubodup #442769</span>
+│   │   ├── <span class="sfx">skeleton_death.ogg</span>  <span class="cm">← spookymodem #202091</span>
+│   │   └── <span class="sfx">skeleton_aggro.ogg</span>  <span class="cm">← giddster #416060</span>
+│   ├── <span class="dir">ui/</span>
+│   │   ├── <span class="ui">ui_navigate.ogg</span>     <span class="cm">← suntemple #253168</span>
+│   │   ├── <span class="ui">ui_confirm.ogg</span>      <span class="cm">← GameAudio #220206</span>
+│   │   ├── <span class="ui">ui_back.ogg</span>         <span class="cm">← Breviceps #366104</span>
+│   │   └── <span class="ui">ui_pause.ogg</span>        <span class="cm">← Kinoton (trim #516566)</span>
+│   └── <span class="dir">environment/</span>
+│       ├── <span class="env">ambient_dungeon.ogg</span> <span class="cm">← Kinoton #516566</span>
+│       └── <span class="env">wave_horn.ogg</span>       <span class="cm">← DeVern #512490</span></div>
+    </section>
+
+    <!-- ===== ATTRIBUTION ===== -->
+    <section class="section-card attrib-block" id="attribution">
+      <h2><span class="dot" style="background:var(--warn)"></span> Attribution Template</h2>
+      <p class="note" style="margin-bottom:10px;">Include this in your game credits or a <code style="font-size:12px;background:rgba(0,0,0,.25);padding:1px 5px;border-radius:4px;color:#c9d7ef;">LICENSES.txt</code> file. CC0 sounds require no attribution but crediting is appreciated.</p>
+      <pre>
+== Audio Credits ==
+
+--- CC-BY 4.0 (attribution required) ---
+
+Jingle_Lose_00.wav
+  by LittleRobotSoundFactory — https://freesound.org/s/270467/
+  License: Creative Commons Attribution 4.0
+
+Sword_whoosh_sound.mp3
+  by Artninja — https://freesound.org/s/700220/
+  License: Creative Commons Attribution 4.0
+
+Metal Impact.wav
+  by CGEffex — https://freesound.org/s/97792/
+  License: Creative Commons Attribution 4.0
+
+Death by Zombie
+  by giddster — https://freesound.org/s/416060/
+  License: Creative Commons Attribution 4.0
+
+--- CC0 (no attribution required, credited voluntarily) ---
+
+Dark Dungeon Ambience by Kinoton (#516566)
+Stone Steps by Phil25 (#208103)
+Steps on concrete by areniporgen (#712084)
+Hit Impact Sword 2 by CogFireStudios (#547036)
+Sword Hit by qubodup (#442769)
+jump-grunt by luminousfridge (#561555)
+BodyFall by 000600 (#187136)
+Rattling Bones by spookymodem (#202102)
+Falling Bones by spookymodem (#202091)
+Skeleton bones (game) by cribbler (#381859)
+Sword hit (low metal) by xkeril (#815763)
+Victory (short sting) by xkeril (#706753)
+SFX UI Button Click by suntemple (#253168)
+UI SFX pack by GameAudio (#220206)
+Clicks, Buttons & UI by Breviceps (#366104)
+battle-march action loop by haydensayshi123 (#138681)
+Distant War Horn by DeVern (#512490)
+Concrete Footsteps by SoftDistortionFX (#465299)
+BODY FALL by leonelmail (#504626)
+
+All sounds sourced from https://freesound.org</pre>
+    </section>
+
+  </main>
+
+  <!-- ===== Interactive sliders ===== -->
+  <script>
+    const sliders = document.querySelectorAll('.slider-track');
+    let active = null;
+
+    function update(track, pct) {
+      pct = Math.max(0, Math.min(100, Math.round(pct)));
+      const name = track.dataset.slider;
+      track.querySelector('.slider-fill').style.width = pct + '%';
+      track.querySelector('.slider-thumb').style.left = pct + '%';
+      const el = document.getElementById(name + '-val');
+      if (el) el.textContent = pct;
+    }
+
+    function pct(track, e) {
+      const r = track.getBoundingClientRect();
+      return ((e.clientX - r.left) / r.width) * 100;
+    }
+
+    sliders.forEach(t => t.addEventListener('mousedown', e => { active = t; update(t, pct(t, e)); }));
+    document.addEventListener('mousemove', e => { if (active) update(active, pct(active, e)); });
+    document.addEventListener('mouseup', () => { active = null; });
+
+    const toggle = document.getElementById('toggle-fullscreen');
+    if (toggle) toggle.addEventListener('click', () => toggle.classList.toggle('off'));
+
+    const reset = document.getElementById('btn-reset');
+    if (reset) reset.addEventListener('click', () => {
+      sliders.forEach(t => update(t, parseInt(t.dataset.default || 80)));
+      if (toggle) toggle.classList.remove('off');
+    });
+  </script>
+</body>
+</html>

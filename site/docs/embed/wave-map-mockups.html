@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Zombies Wave Map Mockups</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0e1218;
+      --panel: #171d27;
+      --panel-alt: #1d2431;
+      --border: #313c4f;
+      --text: #e8eef8;
+      --muted: #9aa9be;
+      --accent: #78a6ff;
+      --danger: #ff4a66;
+      --warn: #ffad33;
+      --ok: #4ce39a;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 14px/1.45 Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    h1, h2, h3 { margin: 0 0 8px; }
+    p { margin: 0; }
+
+    .hero, .legend, .map-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .sub {
+      color: var(--muted);
+      margin-top: 4px;
+      margin-bottom: 10px;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .chip {
+      border: 1px solid #44526a;
+      color: #cfdbf0;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 12px;
+      background: #1b2230;
+    }
+
+    .legend-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .swatch {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      min-height: 72px;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      justify-content: end;
+      gap: 4px;
+      font-size: 12px;
+      color: #dce7f8;
+      background-size: cover;
+    }
+
+    .maps {
+      display: grid;
+      gap: 16px;
+    }
+
+    .map-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .map-title p { color: var(--muted); }
+
+    .buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    button {
+      border: 1px solid #4a5973;
+      background: #202a3a;
+      color: var(--text);
+      border-radius: 8px;
+      padding: 6px 10px;
+      cursor: pointer;
+    }
+
+    button.active {
+      border-color: #7ea9ff;
+      background: #243553;
+      color: #dce8ff;
+    }
+
+    .diagram {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--panel-alt);
+      overflow: hidden;
+    }
+
+    .diagram.hidden { display: none; }
+    svg { display: block; width: 100%; height: auto; }
+
+    .notes {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .notes strong { color: #d8e6ff; }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <section class="hero">
+      <h1>Wave Survival Map Mockups</h1>
+      <p class="sub">
+        Floor plans and vertical-level concepts for small Zombies-style demos using your mixed-neutral prototype textures.
+      </p>
+      <div class="chips">
+        <span class="chip">Scale: Small (5-10 min loop)</span>
+        <span class="chip">Mode: Wave Survival</span>
+        <span class="chip">Variants: 1, 2, 3 Entrances</span>
+      </div>
+    </section>
+
+    <section class="legend">
+      <h2>Texture and Gameplay Legend</h2>
+      <div class="legend-grid">
+        <div class="swatch" style="background-image: url('../kenney_prototypeTextures/PNG/Dark/texture_01.png');">
+          <strong>Core Structure</strong>
+          Dark grid walls/floors
+        </div>
+        <div class="swatch" style="background-image: url('../kenney_prototypeTextures/PNG/Light/texture_01.png'); color:#111;">
+          <strong>Safe/Utility Zones</strong>
+          Spawn, buy node, prep space
+        </div>
+        <div class="swatch" style="background-image: url('../kenney_prototypeTextures/PNG/Purple/texture_10.png');">
+          <strong>Vertical Connector</strong>
+          Stairs and transition ramps
+        </div>
+        <div class="swatch" style="background-image: url('../kenney_prototypeTextures/PNG/Orange/texture_04.png');">
+          <strong>Holdout Choke</strong>
+          Defensive lane
+        </div>
+        <div class="swatch" style="background-image: url('../kenney_prototypeTextures/PNG/Red/texture_03.png');">
+          <strong>Danger Lane</strong>
+          Enemy breach direction
+        </div>
+      </div>
+    </section>
+
+    <section class="maps">
+      <article class="map-card" id="map-a">
+        <div class="map-top">
+          <div class="map-title">
+            <h3>Map A - Single Breach Holdout (1 Entrance)</h3>
+            <p>Beginner pressure map. One enemy lane, two fallback positions, short vertical loop.</p>
+          </div>
+          <div class="buttons">
+            <button class="active" data-map="a" data-view="floor">Floor Plan</button>
+            <button data-map="a" data-view="vertical">Vertical Levels</button>
+          </div>
+        </div>
+
+        <div class="diagram view-floor" data-map="a">
+          <svg viewBox="0 0 960 420" aria-label="Map A floor plan">
+            <rect x="0" y="0" width="960" height="420" fill="#1d2431" />
+            <rect x="40" y="60" width="220" height="300" fill="#d3d6d9" />
+            <rect x="260" y="120" width="260" height="180" fill="#2f3138" stroke="#58627b" />
+            <rect x="520" y="90" width="220" height="240" fill="#ff8c00" opacity="0.7" />
+            <rect x="740" y="150" width="180" height="120" fill="#ff0038" opacity="0.7" />
+            <rect x="290" y="310" width="180" height="40" fill="#9d22fa" opacity="0.8" />
+            <line x1="900" y1="210" x2="760" y2="210" stroke="#ff607f" stroke-width="6" marker-end="url(#arrowA)" />
+            <defs>
+              <marker id="arrowA" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                <polygon points="0 0, 10 3, 0 6" fill="#ff607f" />
+              </marker>
+            </defs>
+            <text x="60" y="90" fill="#101420" font-size="16" font-weight="700">PLAYER SPAWN</text>
+            <text x="305" y="165" fill="#c9d7ef" font-size="14">CORE ROOM</text>
+            <text x="550" y="140" fill="#1c1100" font-size="14" font-weight="700">HOLDOUT LANE</text>
+            <text x="760" y="175" fill="#ffd4dd" font-size="14">ENEMY BREACH</text>
+            <text x="305" y="337" fill="#f2deff" font-size="14">STAIRS TO L1</text>
+          </svg>
+        </div>
+        <div class="diagram view-vertical hidden" data-map="a">
+          <svg viewBox="0 0 960 360" aria-label="Map A vertical levels">
+            <rect width="960" height="360" fill="#1d2431" />
+            <rect x="60" y="230" width="260" height="90" fill="#d3d6d9" />
+            <rect x="320" y="210" width="260" height="110" fill="#2f3138" />
+            <rect x="580" y="230" width="240" height="90" fill="#ff8c00" opacity="0.75" />
+            <rect x="350" y="90" width="210" height="80" fill="#9d22fa" opacity="0.85" />
+            <line x1="320" y1="210" x2="350" y2="170" stroke="#c79bff" stroke-width="6" />
+            <line x1="560" y1="170" x2="580" y2="230" stroke="#c79bff" stroke-width="6" />
+            <line x1="860" y1="260" x2="820" y2="260" stroke="#ff607f" stroke-width="6" marker-end="url(#arrowAv)" />
+            <defs>
+              <marker id="arrowAv" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                <polygon points="0 0, 10 3, 0 6" fill="#ff607f" />
+              </marker>
+            </defs>
+            <text x="70" y="248" fill="#131a25" font-size="14" font-weight="700">L0 SPAWN</text>
+            <text x="360" y="115" fill="#f4e7ff" font-size="14">L1 CATWALK</text>
+            <text x="600" y="248" fill="#201300" font-size="14" font-weight="700">L0 HOLDOUT</text>
+          </svg>
+        </div>
+        <p class="notes"><strong>Intent:</strong> Mirrors a classic early-round bunker flow: one clear breach line, predictable pressure, and a simple staircase escape.</p>
+      </article>
+
+      <article class="map-card" id="map-b">
+        <div class="map-top">
+          <div class="map-title">
+            <h3>Map B - Dual-Pinch Warehouse (2 Entrances)</h3>
+            <p>Mid-pressure map. Two enemy fronts force crossfire decisions and rotation discipline.</p>
+          </div>
+          <div class="buttons">
+            <button class="active" data-map="b" data-view="floor">Floor Plan</button>
+            <button data-map="b" data-view="vertical">Vertical Levels</button>
+          </div>
+        </div>
+
+        <div class="diagram view-floor" data-map="b">
+          <svg viewBox="0 0 960 420" aria-label="Map B floor plan">
+            <rect width="960" height="420" fill="#1d2431" />
+            <rect x="60" y="150" width="170" height="150" fill="#ff0038" opacity="0.72" />
+            <rect x="230" y="70" width="500" height="280" fill="#2f3138" stroke="#58627b" />
+            <rect x="730" y="130" width="170" height="170" fill="#ff0038" opacity="0.72" />
+            <rect x="430" y="20" width="100" height="50" fill="#d3d6d9" />
+            <rect x="390" y="350" width="180" height="40" fill="#9d22fa" opacity="0.8" />
+            <rect x="380" y="170" width="200" height="80" fill="#ff8c00" opacity="0.75" />
+            <line x1="220" y1="225" x2="250" y2="225" stroke="#ff607f" stroke-width="6" marker-end="url(#arrowB1)" />
+            <line x1="740" y1="215" x2="710" y2="215" stroke="#ff607f" stroke-width="6" marker-end="url(#arrowB2)" />
+            <defs>
+              <marker id="arrowB1" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                <polygon points="0 0, 10 3, 0 6" fill="#ff607f" />
+              </marker>
+              <marker id="arrowB2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                <polygon points="0 0, 10 3, 0 6" fill="#ff607f" />
+              </marker>
+            </defs>
+            <text x="245" y="100" fill="#d7e6ff" font-size="14">CENTRAL LOOP</text>
+            <text x="385" y="205" fill="#241600" font-size="14" font-weight="700">HOLD CHOKE</text>
+            <text x="443" y="52" fill="#101420" font-size="12" font-weight="700">POWER NODE</text>
+            <text x="405" y="375" fill="#f2deff" font-size="14">STAIRS TO L1</text>
+          </svg>
+        </div>
+        <div class="diagram view-vertical hidden" data-map="b">
+          <svg viewBox="0 0 960 360" aria-label="Map B vertical levels">
+            <rect width="960" height="360" fill="#1d2431" />
+            <rect x="80" y="220" width="820" height="100" fill="#2f3138" />
+            <rect x="260" y="120" width="440" height="70" fill="#9d22fa" opacity="0.8" />
+            <rect x="400" y="60" width="160" height="45" fill="#d3d6d9" />
+            <line x1="280" y1="220" x2="300" y2="190" stroke="#c79bff" stroke-width="6" />
+            <line x1="680" y1="190" x2="700" y2="220" stroke="#c79bff" stroke-width="6" />
+            <line x1="90" y1="255" x2="130" y2="255" stroke="#ff607f" stroke-width="6" marker-end="url(#arrowBv1)" />
+            <line x1="900" y1="255" x2="860" y2="255" stroke="#ff607f" stroke-width="6" marker-end="url(#arrowBv2)" />
+            <defs>
+              <marker id="arrowBv1" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                <polygon points="0 0, 10 3, 0 6" fill="#ff607f" />
+              </marker>
+              <marker id="arrowBv2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                <polygon points="0 0, 10 3, 0 6" fill="#ff607f" />
+              </marker>
+            </defs>
+            <text x="95" y="242" fill="#dce8ff" font-size="13">L0 ENTRANCE A</text>
+            <text x="760" y="242" fill="#dce8ff" font-size="13">L0 ENTRANCE B</text>
+            <text x="420" y="88" fill="#131a25" font-size="13" font-weight="700">L2 POWER</text>
+            <text x="410" y="145" fill="#f2deff" font-size="13">L1 BRIDGE</text>
+          </svg>
+        </div>
+        <p class="notes"><strong>Intent:</strong> Two opposing entrances create a pinch threat; survival depends on controlled rotations through the central loop.</p>
+      </article>
+
+      <article class="map-card" id="map-c">
+        <div class="map-top">
+          <div class="map-title">
+            <h3>Map C - Triple-Front Atrium (3 Entrances)</h3>
+            <p>High-pressure map. Three breach lanes with a wide training ring and elevated reset point.</p>
+          </div>
+          <div class="buttons">
+            <button class="active" data-map="c" data-view="floor">Floor Plan</button>
+            <button data-map="c" data-view="vertical">Vertical Levels</button>
+          </div>
+        </div>
+
+        <div class="diagram view-floor" data-map="c">
+          <svg viewBox="0 0 960 420" aria-label="Map C floor plan">
+            <rect width="960" height="420" fill="#1d2431" />
+            <rect x="80" y="120" width="120" height="180" fill="#ff0038" opacity="0.72" />
+            <rect x="760" y="120" width="120" height="180" fill="#ff0038" opacity="0.72" />
+            <rect x="420" y="20" width="120" height="100" fill="#ff0038" opacity="0.72" />
+            <rect x="210" y="90" width="540" height="250" fill="#2f3138" stroke="#58627b" />
+            <rect x="300" y="150" width="360" height="130" fill="#ff8c00" opacity="0.7" />
+            <rect x="420" y="285" width="120" height="45" fill="#9d22fa" opacity="0.84" />
+            <rect x="240" y="100" width="40" height="220" fill="#d3d6d9" />
+            <line x1="210" y1="210" x2="235" y2="210" stroke="#ff607f" stroke-width="6" marker-end="url(#arrowC1)" />
+            <line x1="750" y1="210" x2="725" y2="210" stroke="#ff607f" stroke-width="6" marker-end="url(#arrowC2)" />
+            <line x1="480" y1="120" x2="480" y2="140" stroke="#ff607f" stroke-width="6" marker-end="url(#arrowC3)" />
+            <defs>
+              <marker id="arrowC1" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                <polygon points="0 0, 10 3, 0 6" fill="#ff607f" />
+              </marker>
+              <marker id="arrowC2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                <polygon points="0 0, 10 3, 0 6" fill="#ff607f" />
+              </marker>
+              <marker id="arrowC3" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                <polygon points="0 0, 10 3, 0 6" fill="#ff607f" />
+              </marker>
+            </defs>
+            <text x="320" y="183" fill="#261700" font-size="14" font-weight="700">CORE DEFENSE BOWL</text>
+            <text x="428" y="312" fill="#f2deff" font-size="13">STAIRS L1</text>
+            <text x="246" y="220" fill="#111827" font-size="12" font-weight="700">SAFE LANE</text>
+            <text x="355" y="335" fill="#dce8ff" font-size="12">Outer ring = training loop</text>
+          </svg>
+        </div>
+        <div class="diagram view-vertical hidden" data-map="c">
+          <svg viewBox="0 0 960 360" aria-label="Map C vertical levels">
+            <rect width="960" height="360" fill="#1d2431" />
+            <rect x="80" y="220" width="800" height="100" fill="#2f3138" />
+            <rect x="260" y="165" width="440" height="45" fill="#ff8c00" opacity="0.78" />
+            <rect x="390" y="95" width="180" height="55" fill="#9d22fa" opacity="0.85" />
+            <rect x="420" y="30" width="120" height="45" fill="#d3d6d9" />
+            <line x1="390" y1="165" x2="420" y2="150" stroke="#c79bff" stroke-width="6" />
+            <line x1="570" y1="150" x2="600" y2="165" stroke="#c79bff" stroke-width="6" />
+            <line x1="80" y1="255" x2="120" y2="255" stroke="#ff607f" stroke-width="6" marker-end="url(#arrowCv1)" />
+            <line x1="880" y1="255" x2="840" y2="255" stroke="#ff607f" stroke-width="6" marker-end="url(#arrowCv2)" />
+            <line x1="480" y1="220" x2="480" y2="180" stroke="#ff607f" stroke-width="6" marker-end="url(#arrowCv3)" />
+            <defs>
+              <marker id="arrowCv1" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                <polygon points="0 0, 10 3, 0 6" fill="#ff607f" />
+              </marker>
+              <marker id="arrowCv2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                <polygon points="0 0, 10 3, 0 6" fill="#ff607f" />
+              </marker>
+              <marker id="arrowCv3" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                <polygon points="0 0, 10 3, 0 6" fill="#ff607f" />
+              </marker>
+            </defs>
+            <text x="100" y="243" fill="#dce8ff" font-size="13">L0 LEFT BREACH</text>
+            <text x="730" y="243" fill="#dce8ff" font-size="13">L0 RIGHT BREACH</text>
+            <text x="495" y="205" fill="#dce8ff" font-size="13">L0 TOP BREACH</text>
+            <text x="420" y="128" fill="#f2deff" font-size="13">L1 RESET WALKWAY</text>
+            <text x="430" y="55" fill="#111827" font-size="13" font-weight="700">L2 POWER</text>
+          </svg>
+        </div>
+        <p class="notes"><strong>Intent:</strong> Three-front pressure encourages kiting and controlled regrouping, with the L1 walkway serving as a brief reset route before dropping back to L0.</p>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    const buttons = Array.from(document.querySelectorAll("button[data-map][data-view]"));
+
+    function setView(mapId, view) {
+      const floor = document.querySelector(`.view-floor[data-map="${mapId}"]`);
+      const vertical = document.querySelector(`.view-vertical[data-map="${mapId}"]`);
+      const mapButtons = buttons.filter((b) => b.dataset.map === mapId);
+
+      mapButtons.forEach((b) => b.classList.toggle("active", b.dataset.view === view));
+      floor.classList.toggle("hidden", view !== "floor");
+      vertical.classList.toggle("hidden", view !== "vertical");
+    }
+
+    buttons.forEach((button) => {
+      button.addEventListener("click", () => setView(button.dataset.map, button.dataset.view));
+    });
+  </script>
+</body>
+</html>

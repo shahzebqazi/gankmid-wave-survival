@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dungeon Prototype — 3D Asset Gallery</title>
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0e1117; --surface: #161b22; --card: #1c2230; --border: #2d3548;
+      --text: #e6edf3; --muted: #7d8590; --accent: #4a9eff; --green: #3fb950;
+      --orange: #d29922; --red: #f85149; --cyan: #00d4ff; --purple: #bc8cff;
+    }
+    * { box-sizing: border-box; margin: 0; }
+    body { background: var(--bg); color: var(--text); font: 14px/1.5 'Segoe UI', system-ui, sans-serif; }
+    .wrap { max-width: 1400px; margin: 0 auto; padding: 32px 24px; }
+    h1 { font-size: 28px; margin-bottom: 4px; }
+    .subtitle { color: var(--muted); margin-bottom: 32px; font-size: 15px; }
+    .section { margin-bottom: 48px; }
+    .section-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+    .section-head h2 { font-size: 20px; }
+    .section-head .count { color: var(--muted); font-size: 13px; }
+    .grid { display: grid; gap: 14px; }
+    .grid-3 { grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); }
+    .grid-4 { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+    .grid-2 { grid-template-columns: repeat(auto-fill, minmax(500px, 1fr)); }
+    .grid-6 { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+    .card-name { font-weight: 600; font-size: 15px; }
+    .card-desc { color: var(--muted); font-size: 12px; line-height: 1.4; }
+    .card-img { height: 100px; display: grid; place-items: center; background: rgba(0,0,0,0.25); border-radius: 8px; overflow: hidden; }
+    .card-img img { max-height: 90px; max-width: 100%; object-fit: contain; image-rendering: pixelated; }
+    .tags { display: flex; flex-wrap: wrap; gap: 4px; }
+    .tag { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 99px; border: 1px solid; }
+    .tag-char { color: var(--cyan); border-color: var(--cyan); }
+    .tag-enemy { color: var(--red); border-color: var(--red); }
+    .tag-weapon { color: var(--orange); border-color: var(--orange); }
+    .tag-anim { color: var(--purple); border-color: var(--purple); }
+    .tag-tex { color: var(--green); border-color: var(--green); }
+    .tag-ui { color: var(--accent); border-color: var(--accent); }
+    .tag-env { color: #8b949e; border-color: #8b949e; }
+    model-viewer { width: 100%; border-radius: 8px; background: radial-gradient(ellipse at center, #1a1e2e 0%, #0d0f16 100%); --poster-color: transparent; }
+    model-viewer.char-viewer { height: 360px; }
+    model-viewer.weapon-viewer { height: 220px; }
+    model-viewer.anim-viewer { height: 400px; }
+    nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px; }
+    nav a { color: var(--accent); text-decoration: none; font-size: 13px; padding: 4px 12px; border: 1px solid var(--border); border-radius: 6px; transition: background 0.15s; }
+    nav a:hover { background: rgba(74,158,255,0.1); }
+    .note { color: var(--muted); font-size: 12px; margin-top: 10px; }
+    .now-playing { color: var(--accent); font-size: 12px; min-height: 18px; }
+    .anim-btns { display: flex; flex-wrap: wrap; gap: 4px; max-height: 160px; overflow-y: auto; padding: 4px 0; }
+    .anim-btns::-webkit-scrollbar { width: 4px; }
+    .anim-btns::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    .anim-btn { font-size: 11px; padding: 4px 10px; border-radius: 99px; border: 1px solid var(--border); color: var(--muted); background: transparent; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+    .anim-btn:hover { background: rgba(188,140,255,0.1); border-color: var(--purple); color: var(--purple); }
+    .anim-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(74,158,255,0.1); }
+    .anim-btn.model-btn { border-color: var(--cyan); color: var(--cyan); }
+    .anim-btn.model-btn:hover, .anim-btn.model-btn.active { background: rgba(0,212,255,0.1); }
+    .anim-category { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); padding: 6px 0 2px; width: 100%; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Dungeon Prototype — 3D Asset Gallery</h1>
+  <p class="subtitle">Interactive 3D models with all animations. Drag to rotate, scroll to zoom. Click animation buttons to preview.</p>
+
+  <nav>
+    <a href="#adventurers">Adventurers</a>
+    <a href="#skeletons">Skeletons</a>
+    <a href="#weapons">Weapons</a>
+    <a href="#animations">All Animations</a>
+    <a href="#planets">Planets</a>
+    <a href="#powerups">Power-Ups</a>
+    <a href="#textures">Textures</a>
+    <a href="#fonts">Fonts</a>
+  </nav>
+
+  <!-- ======= ADVENTURERS ======= -->
+  <section class="section" id="adventurers">
+    <div class="section-head">
+      <h2>Playable Characters</h2>
+      <span class="count">6 characters &middot; Click animation buttons to preview on mannequin, click character name to return to model</span>
+    </div>
+    <div class="grid grid-3" id="char-grid"></div>
+  </section>
+
+  <!-- ======= SKELETONS ======= -->
+  <section class="section" id="skeletons">
+    <div class="section-head">
+      <h2>Skeleton Enemies</h2>
+      <span class="count">4 variants &middot; Skeleton-specific + shared animations</span>
+    </div>
+    <div class="grid grid-4" id="skel-grid"></div>
+  </section>
+
+  <!-- ======= WEAPONS ======= -->
+  <section class="section" id="weapons">
+    <div class="section-head">
+      <h2>Weapons &amp; Equipment</h2>
+      <span class="count">Drag to rotate &middot; GLTF with knight_texture.png</span>
+    </div>
+    <div class="grid grid-4" id="weapon-grid"></div>
+    <p class="note">All 31 weapon/item GLTF models use knight_texture.png. Attach via BoneAttachment3D on handslot.r / handslot.l bones.</p>
+  </section>
+
+  <!-- ======= ALL ANIMATIONS ======= -->
+  <section class="section" id="animations">
+    <div class="section-head">
+      <h2>Full Animation Library</h2>
+      <span class="count">8 packs &middot; 90+ clips &middot; Click any clip name to preview</span>
+    </div>
+    <div class="grid grid-2" id="anim-grid"></div>
+  </section>
+
+  <!-- ======= PLANETS ======= -->
+  <section class="section" id="planets">
+    <div class="section-head"><h2>Planets / Skybox Art</h2><span class="count">5 sprites &middot; 48&times;48 pixel art</span></div>
+    <div class="grid grid-4">
+      <div class="card"><div class="card-img" style="background:#06060f;"><img src="../Planets/Ice.png" style="width:80px;height:80px;" /></div><div class="card-name">Ice</div><div class="card-desc">Frozen world. Blue-white surface, cool tones.</div></div>
+      <div class="card"><div class="card-img" style="background:#06060f;"><img src="../Planets/Terran.png" style="width:80px;height:80px;" /></div><div class="card-name">Terran</div><div class="card-desc">Earth-like. Green landmass, blue oceans.</div></div>
+      <div class="card"><div class="card-img" style="background:#06060f;"><img src="../Planets/Baren.png" style="width:80px;height:80px;" /></div><div class="card-name">Barren</div><div class="card-desc">Cratered moon/asteroid. Gray-teal, desolate.</div></div>
+      <div class="card"><div class="card-img" style="background:#06060f;"><img src="../Planets/Lava.png" style="width:80px;height:80px;" /></div><div class="card-name">Lava</div><div class="card-desc">Molten world. Glowing orange cracks, dark crust.</div></div>
+      <div class="card"><div class="card-img" style="background:#06060f;"><img src="../Planets/Black_hole.png" style="width:80px;height:80px;" /></div><div class="card-name">Black Hole</div><div class="card-desc">Swirling void with cyan-purple accretion disk.</div></div>
+    </div>
+    <p class="note">Rendered as billboard quads via SkyboxPlanets.gd. Randomized layout + 200 twinkling gold/white stars.</p>
+  </section>
+
+  <!-- ======= POWER-UPS ======= -->
+  <section class="section" id="powerups">
+    <div class="section-head"><h2>Power-Up Icons</h2><span class="count">3 SVGs &middot; 64&times;64 &middot; Cycle 3</span></div>
+    <div class="grid grid-3">
+      <div class="card"><div class="card-img" style="background:#0a1520;"><img src="../project/assets/icons/powerup_double_jump.svg" style="width:64px;" /></div><div class="card-name">Double Jump</div><div class="card-desc">Cyan. One extra air jump for 30s. 22% drop.</div></div>
+      <div class="card"><div class="card-img" style="background:#0a200a;"><img src="../project/assets/icons/powerup_regen.svg" style="width:64px;" /></div><div class="card-name">Regeneration</div><div class="card-desc">Green. +2 HP/sec for 30s. 22% drop.</div></div>
+      <div class="card"><div class="card-img" style="background:#200a0a;"><img src="../project/assets/icons/powerup_attack_speed.svg" style="width:64px;" /></div><div class="card-name">Attack Speed</div><div class="card-desc">Red. -20% cooldown for 30s. 22% drop.</div></div>
+    </div>
+  </section>
+
+  <!-- ======= TEXTURES ======= -->
+  <section class="section" id="textures">
+    <div class="section-head"><h2>Prototype Textures</h2><span class="count">6 colors &times; 13 each &middot; Kenney</span></div>
+    <div class="grid grid-6">
+      <div class="card"><div class="card-img"><img src="../kenney_prototypeTextures/PNG/Dark/texture_01.png" /></div><div class="card-name">Dark</div><div class="card-desc">Floors</div></div>
+      <div class="card"><div class="card-img"><img src="../kenney_prototypeTextures/PNG/Light/texture_01.png" /></div><div class="card-name">Light</div><div class="card-desc">Walls</div></div>
+      <div class="card"><div class="card-img"><img src="../kenney_prototypeTextures/PNG/Green/texture_01.png" /></div><div class="card-name">Green</div><div class="card-desc">Safe zones</div></div>
+      <div class="card"><div class="card-img"><img src="../kenney_prototypeTextures/PNG/Red/texture_01.png" /></div><div class="card-name">Red</div><div class="card-desc">Danger</div></div>
+      <div class="card"><div class="card-img"><img src="../kenney_prototypeTextures/PNG/Orange/texture_01.png" /></div><div class="card-name">Orange</div><div class="card-desc">Warning</div></div>
+      <div class="card"><div class="card-img"><img src="../kenney_prototypeTextures/PNG/Purple/texture_01.png" /></div><div class="card-name">Purple</div><div class="card-desc">Magic</div></div>
+    </div>
+  </section>
+
+  <!-- ======= FONTS ======= -->
+  <section class="section" id="fonts">
+    <div class="section-head"><h2>Fonts</h2><span class="count">Monogram by datagoblin</span></div>
+    <div class="grid grid-3">
+      <div class="card"><div class="card-name">monogram-extended.ttf</div><div class="card-desc">Primary game font. Pixel monospace, extended charset. All UI.</div><div class="tags"><span class="tag tag-ui">Primary</span></div></div>
+      <div class="card"><div class="card-name">monogram.ttf</div><div class="card-desc">Base font, smaller charset.</div><div class="tags"><span class="tag tag-ui">Base</span></div></div>
+      <div class="card"><div class="card-name">monogram-extended-italic.ttf</div><div class="card-desc">Italic variant for emphasis text.</div><div class="tags"><span class="tag tag-ui">Italic</span></div></div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+const ANIM_PACKS = [
+  { id: 'general', name: 'General', src: '../KayKit_Character_Animations_1.1/Animations/gltf/Rig_Medium/Rig_Medium_General.glb', desc: 'Idle, Death, Hit, Interact, Spawn' },
+  { id: 'movebasic', name: 'Movement', src: '../KayKit_Character_Animations_1.1/Animations/gltf/Rig_Medium/Rig_Medium_MovementBasic.glb', desc: 'Run, Walk, Jump' },
+  { id: 'moveadv', name: 'Advanced', src: '../KayKit_Character_Animations_1.1/Animations/gltf/Rig_Medium/Rig_Medium_MovementAdvanced.glb', desc: 'Dodge, Strafe, Crawl, Sneak' },
+  { id: 'melee', name: 'Melee', src: '../KayKit_Character_Animations_1.1/Animations/gltf/Rig_Medium/Rig_Medium_CombatMelee.glb', desc: '1H/2H/Dual attacks, Block' },
+  { id: 'ranged', name: 'Ranged', src: '../KayKit_Character_Animations_1.1/Animations/gltf/Rig_Medium/Rig_Medium_CombatRanged.glb', desc: 'Bow, Crossbow, Magic' },
+  { id: 'special', name: 'Special', src: '../KayKit_Character_Animations_1.1/Animations/gltf/Rig_Medium/Rig_Medium_Special.glb', desc: 'Skeleton-specific anims' },
+  { id: 'sim', name: 'Simulation', src: '../KayKit_Character_Animations_1.1/Animations/gltf/Rig_Medium/Rig_Medium_Simulation.glb', desc: 'Social, sit, lie, wave' },
+  { id: 'tools', name: 'Tools', src: '../KayKit_Character_Animations_1.1/Animations/gltf/Rig_Medium/Rig_Medium_Tools.glb', desc: 'Chop, dig, fish, hammer' },
+];
+
+const CHARACTERS = [
+  { name: 'Knight', src: '../KayKit_Adventurers_2.0_FREE/KayKit_Adventurers_2.0_FREE/Characters/gltf/Knight.glb', desc: 'Heavy armored warrior. Visor helmet, cape. Default character. 1H sword + round shield.', tags: ['Player', 'Default'] },
+  { name: 'Barbarian', src: '../KayKit_Adventurers_2.0_FREE/KayKit_Adventurers_2.0_FREE/Characters/gltf/Barbarian.glb', desc: 'Bare-chested brawler, fur armor. 2H axe or dual-wield. Largest frame.', tags: ['Player'] },
+  { name: 'Mage', src: '../KayKit_Adventurers_2.0_FREE/KayKit_Adventurers_2.0_FREE/Characters/gltf/Mage.glb', desc: 'Robed spellcaster, pointed hat. Staff or wand + spellbook.', tags: ['Player'] },
+  { name: 'Ranger', src: '../KayKit_Adventurers_2.0_FREE/KayKit_Adventurers_2.0_FREE/Characters/gltf/Ranger.glb', desc: 'Hooded archer, light armor. Bow or crossbow + quiver.', tags: ['Player'] },
+  { name: 'Rogue', src: '../KayKit_Adventurers_2.0_FREE/KayKit_Adventurers_2.0_FREE/Characters/gltf/Rogue.glb', desc: 'Leather armor, lightweight fighter. Daggers, dual-wield.', tags: ['Player'] },
+  { name: 'Rogue (Hooded)', src: '../KayKit_Adventurers_2.0_FREE/KayKit_Adventurers_2.0_FREE/Characters/gltf/Rogue_Hooded.glb', desc: 'Hooded rogue variant. Same rig, stealthier silhouette.', tags: ['Player'] },
+];
+
+const SKELETONS = [
+  { name: 'Skeleton Minion', src: '../KayKit_Skeletons_1.1_FREE/characters/gltf/Skeleton_Minion.glb', desc: 'Basic undead foot soldier. Cloaked, smallest build.' },
+  { name: 'Skeleton Warrior', src: '../KayKit_Skeletons_1.1_FREE/characters/gltf/Skeleton_Warrior.glb', desc: 'Armored undead. Bulkier bone plating.' },
+  { name: 'Skeleton Mage', src: '../KayKit_Skeletons_1.1_FREE/characters/gltf/Skeleton_Mage.glb', desc: 'Cloaked caster. Robed silhouette.' },
+  { name: 'Skeleton Rogue', src: '../KayKit_Skeletons_1.1_FREE/characters/gltf/Skeleton_Rogue.glb', desc: 'Lean undead assassin. Fast silhouette.' },
+];
+
+const WEAPONS = [
+  { name: 'Sword (1H)', src: '../KayKit_Adventurers_2.0_FREE/KayKit_Adventurers_2.0_FREE/Assets/gltf/sword_1handed.gltf', desc: 'Knight default. handslot.r', tags: ['Melee','Equipped'] },
+  { name: 'Shield (Round)', src: '../KayKit_Adventurers_2.0_FREE/KayKit_Adventurers_2.0_FREE/Assets/gltf/shield_round.gltf', desc: 'Knight default. handslot.l. 75% block.', tags: ['Defense','Equipped'] },
+  { name: 'Sword (2H)', src: '../KayKit_Adventurers_2.0_FREE/KayKit_Adventurers_2.0_FREE/Assets/gltf/sword_2handed.gltf', desc: 'Greatsword. Melee_2H anims.', tags: ['Melee'] },
+  { name: 'Axe (2H)', src: '../KayKit_Adventurers_2.0_FREE/KayKit_Adventurers_2.0_FREE/Assets/gltf/axe_2handed.gltf', desc: 'Greataxe. Barbarian loadout.', tags: ['Melee'] },
+  { name: 'Dagger', src: '../KayKit_Adventurers_2.0_FREE/KayKit_Adventurers_2.0_FREE/Assets/gltf/dagger.gltf', desc: 'Rogue weapon. Dualwield anims.', tags: ['Melee'] },
+  { name: 'Bow', src: '../KayKit_Adventurers_2.0_FREE/KayKit_Adventurers_2.0_FREE/Assets/gltf/bow_withString.gltf', desc: 'Ranger. Ranged_Bow anims.', tags: ['Ranged'] },
+  { name: 'Staff', src: '../KayKit_Adventurers_2.0_FREE/KayKit_Adventurers_2.0_FREE/Assets/gltf/staff.gltf', desc: 'Mage. Ranged_Magic anims.', tags: ['Magic'] },
+  { name: 'Crossbow (2H)', src: '../KayKit_Adventurers_2.0_FREE/KayKit_Adventurers_2.0_FREE/Assets/gltf/crossbow_2handed.gltf', desc: 'Heavy crossbow. Ranged_2H anims.', tags: ['Ranged'] },
+];
+
+const CAM_CHAR = 'camera-orbit="25deg 72deg 6m" min-camera-orbit="auto auto 2.5m" max-camera-orbit="auto auto 10m"';
+const CAM_SKEL = 'camera-orbit="25deg 72deg 5.5m" min-camera-orbit="auto auto 2m" max-camera-orbit="auto auto 9m"';
+const CAM_WEAP = 'camera-orbit="25deg 72deg 4m" min-camera-orbit="auto auto 1m" max-camera-orbit="auto auto 8m"';
+const CAM_ANIM = 'camera-orbit="25deg 72deg 5m" min-camera-orbit="auto auto 2m" max-camera-orbit="auto auto 9m"';
+
+const IDLE_SRC = '../KayKit_Character_Animations_1.1/Animations/gltf/Rig_Medium/Rig_Medium_General.glb';
+
+function buildCharCard(char, idx) {
+  const id = `char-${idx}`;
+  const tagsHtml = (char.tags || []).map(t => `<span class="tag tag-char">${t}</span>`).join('');
+  return `<div class="card">
+    <model-viewer id="${id}" class="char-viewer" src="${char.src}" auto-rotate camera-controls touch-action="pan-y" ${CAM_CHAR} shadow-intensity="0.4" exposure="1.2"></model-viewer>
+    <div class="now-playing" id="${id}-now">Viewing: ${char.name}</div>
+    <div class="card-name">${char.name}</div>
+    <div class="card-desc">${char.desc}</div>
+    <div class="tags">${tagsHtml}</div>
+    <div class="anim-btns" id="${id}-btns">
+      <button class="anim-btn model-btn active" data-src="${char.src}" data-anim="" data-viewer="${id}">&#9654; ${char.name} Model</button>
+      ${ANIM_PACKS.map(p => `<span class="anim-category">${p.name}</span>`+
+        `<button class="anim-btn" data-src="${p.src}" data-anim="__auto__" data-viewer="${id}" data-pack="${p.name}">Loading...</button>`
+      ).join('')}
+    </div>
+  </div>`;
+}
+
+function buildSkelCard(skel, idx) {
+  const id = `skel-${idx}`;
+  return `<div class="card">
+    <model-viewer id="${id}" class="char-viewer" src="${skel.src}" auto-rotate camera-controls touch-action="pan-y" ${CAM_SKEL} shadow-intensity="0.4" exposure="1.2"></model-viewer>
+    <div class="now-playing" id="${id}-now">Viewing: ${skel.name}</div>
+    <div class="card-name">${skel.name}</div>
+    <div class="card-desc">${skel.desc}</div>
+    <div class="tags"><span class="tag tag-enemy">Enemy</span></div>
+    <div class="anim-btns" id="${id}-btns">
+      <button class="anim-btn model-btn active" data-src="${skel.src}" data-anim="" data-viewer="${id}">&#9654; ${skel.name}</button>
+      ${ANIM_PACKS.map(p => `<span class="anim-category">${p.name}</span>`+
+        `<button class="anim-btn" data-src="${p.src}" data-anim="__auto__" data-viewer="${id}" data-pack="${p.name}">Loading...</button>`
+      ).join('')}
+    </div>
+  </div>`;
+}
+
+function buildWeaponCard(w) {
+  const tagsHtml = (w.tags||[]).map(t=>`<span class="tag tag-weapon">${t}</span>`).join('');
+  return `<div class="card">
+    <model-viewer class="weapon-viewer" src="${w.src}" auto-rotate camera-controls ${CAM_WEAP} shadow-intensity="0.3" exposure="1.2"></model-viewer>
+    <div class="card-name">${w.name}</div>
+    <div class="card-desc">${w.desc}</div>
+    <div class="tags">${tagsHtml}</div>
+  </div>`;
+}
+
+function buildAnimCard(pack) {
+  return `<div class="card">
+    <model-viewer id="anim-${pack.id}" class="anim-viewer" src="${pack.src}" camera-controls touch-action="pan-y" ${CAM_ANIM} shadow-intensity="0.4" exposure="1.0" autoplay></model-viewer>
+    <div class="now-playing" id="anim-${pack.id}-now"></div>
+    <div class="card-name">${pack.name}</div>
+    <div class="card-desc">${pack.desc}</div>
+    <div class="anim-btns" id="anim-${pack.id}-btns"></div>
+  </div>`;
+}
+
+document.getElementById('char-grid').innerHTML = CHARACTERS.map(buildCharCard).join('');
+document.getElementById('skel-grid').innerHTML = SKELETONS.map(buildSkelCard).join('');
+document.getElementById('weapon-grid').innerHTML = WEAPONS.map(buildWeaponCard).join('');
+document.getElementById('anim-grid').innerHTML = ANIM_PACKS.map(buildAnimCard).join('');
+
+// Cache animation names per GLB src
+const animCache = {};
+
+async function getAnims(src) {
+  if (animCache[src]) return animCache[src];
+  return new Promise(resolve => {
+    const tmp = document.createElement('model-viewer');
+    tmp.style.display = 'none';
+    tmp.src = src;
+    document.body.appendChild(tmp);
+    tmp.addEventListener('load', () => {
+      const names = [...(tmp.availableAnimations || [])].filter(n => n !== 'T-Pose');
+      animCache[src] = names;
+      tmp.remove();
+      resolve(names);
+    });
+    setTimeout(() => { tmp.remove(); resolve([]); }, 10000);
+  });
+}
+
+// Populate animation buttons for character/skeleton cards
+async function populateCardButtons(cardPrefix, count) {
+  for (let i = 0; i < count; i++) {
+    const id = `${cardPrefix}-${i}`;
+    const btnsEl = document.getElementById(`${id}-btns`);
+    if (!btnsEl) continue;
+
+    const placeholders = btnsEl.querySelectorAll('.anim-btn:not(.model-btn)');
+    for (const ph of placeholders) {
+      const src = ph.dataset.src;
+      const packName = ph.dataset.pack;
+      const anims = await getAnims(src);
+      if (anims.length === 0) {
+        ph.textContent = `${packName}: none`;
+        ph.disabled = true;
+        ph.style.opacity = '0.3';
+        continue;
+      }
+      const parent = ph.parentElement;
+      const category = ph.previousElementSibling;
+      anims.forEach((name, j) => {
+        const btn = document.createElement('button');
+        btn.className = 'anim-btn';
+        btn.textContent = name;
+        btn.dataset.src = src;
+        btn.dataset.anim = name;
+        btn.dataset.viewer = id;
+        parent.insertBefore(btn, ph);
+      });
+      ph.remove();
+    }
+  }
+}
+
+// Populate animation pack viewers
+ANIM_PACKS.forEach(pack => {
+  const mv = document.getElementById(`anim-${pack.id}`);
+  const container = document.getElementById(`anim-${pack.id}-btns`);
+  const nowEl = document.getElementById(`anim-${pack.id}-now`);
+  mv.addEventListener('load', () => {
+    const names = [...(mv.availableAnimations||[])].filter(n=>n!=='T-Pose');
+    animCache[pack.src] = names;
+    container.innerHTML = '';
+    names.forEach(name => {
+      const btn = document.createElement('button');
+      btn.className = 'anim-btn';
+      btn.textContent = name;
+      btn.addEventListener('click', () => {
+        mv.animationName = name;
+        mv.play();
+        container.querySelectorAll('.anim-btn').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        nowEl.textContent = `Playing: ${name}`;
+      });
+      container.appendChild(btn);
+    });
+    if (names.length) {
+      mv.animationName = names[0];
+      mv.play();
+      nowEl.textContent = `Playing: ${names[0]}`;
+      container.querySelector('.anim-btn')?.classList.add('active');
+    }
+  });
+});
+
+// Global click handler for character/skeleton animation buttons
+document.addEventListener('click', e => {
+  const btn = e.target.closest('.anim-btn');
+  if (!btn || !btn.dataset.viewer) return;
+  const viewerId = btn.dataset.viewer;
+  const mv = document.getElementById(viewerId);
+  const nowEl = document.getElementById(`${viewerId}-now`);
+  if (!mv) return;
+
+  const src = btn.dataset.src;
+  const anim = btn.dataset.anim;
+
+  const btnsContainer = btn.closest('.anim-btns');
+  btnsContainer.querySelectorAll('.anim-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  if (mv.src !== new URL(src, location.href).href) {
+    mv.src = src;
+    if (anim && anim !== '__auto__') {
+      mv.addEventListener('load', function onLoad() {
+        mv.removeEventListener('load', onLoad);
+        mv.animationName = anim;
+        mv.play();
+        nowEl.textContent = `Playing: ${anim}`;
+      });
+    } else if (!anim) {
+      mv.addEventListener('load', function onLoad() {
+        mv.removeEventListener('load', onLoad);
+        nowEl.textContent = 'Viewing model';
+      });
+    }
+  } else if (anim && anim !== '__auto__') {
+    mv.animationName = anim;
+    mv.play();
+    nowEl.textContent = `Playing: ${anim}`;
+  } else {
+    nowEl.textContent = 'Viewing model';
+  }
+});
+
+populateCardButtons('char', CHARACTERS.length);
+populateCardButtons('skel', SKELETONS.length);
+</script>
+</body>
+</html>
