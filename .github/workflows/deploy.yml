@@ -1,0 +1,22 @@
+name: Deploy to dev.gankmid.co
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy via rsync
+        uses: burnett01/rsync-deployments@7.0.1
+        with:
+          switches: -avz --delete
+          path: site/
+          remote_path: /var/www/dev.gankmid.co/
+          remote_host: ${{ secrets.DROPLET_IP }}
+          remote_user: ${{ secrets.DROPLET_USER }}
+          remote_key: ${{ secrets.DROPLET_SSH_KEY }}
