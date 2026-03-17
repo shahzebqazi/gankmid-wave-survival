@@ -263,11 +263,48 @@ nav a.active { border-color: var(--accent); color: var(--accent); }
 }
 
 /* RESPONSIVE */
-@media (max-width: 768px) {
-  .card-grid { grid-template-columns: 1fr; }
-  .hero { padding: 20px; }
+@media (max-width: 900px) {
+  .topbar { padding: 0 16px; }
+  .topbar-inner {
+    flex-wrap: wrap;
+    height: auto;
+    min-height: 56px;
+    padding: 8px 0;
+    gap: 8px;
+  }
+  .logo { font-size: 14px; }
+  nav {
+    flex: 1 1 100%;
+    order: 2;
+    justify-content: flex-start;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+  }
+  nav a { padding: 6px 10px; font-size: 12px; }
+  .container { padding: 20px 16px; }
+  .hero { padding: 24px 20px; }
   .hero h1 { font-size: 22px; }
-  .topbar-inner { gap: 12px; }
+  .hero .sub { font-size: 14px; }
+  .chips { gap: 6px; }
+  .chip { padding: 3px 10px; font-size: 11px; }
+  .card-grid { grid-template-columns: 1fr; gap: 12px; }
+  .card-thumb { height: 140px; }
+  .card-body h3 { font-size: 15px; }
+  .card-body p { font-size: 12px; }
+  .card-footer { flex-wrap: wrap; gap: 6px; font-size: 11px; }
+  .doc-frame { margin: 0 -16px 24px; border-radius: 0; border-left: none; border-right: none; }
+  .doc-header { padding: 12px 16px; }
+  .doc-frame iframe { min-height: 70vh; }
+  .site-footer { padding: 16px; font-size: 11px; }
+}
+
+@media (max-width: 480px) {
+  .topbar-inner { gap: 6px; }
+  .container { padding: 16px 12px; }
+  .hero { padding: 16px; margin-bottom: 24px; }
+  .hero h1 { font-size: 18px; }
+  .card-thumb { height: 120px; }
+  .card-thumb .icon { font-size: 36px; }
 }
 
 /* MARKDOWN CONTENT (for md pages rendered inline) */
