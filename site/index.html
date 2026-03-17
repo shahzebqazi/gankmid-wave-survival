@@ -3,134 +3,112 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>GankMid — Wave Survival</title>
-  <link rel="stylesheet" href="css/style.css">
+  <title>GankMid — Dev</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0a0d12;
+      --surface: #111620;
+      --card: #171d2a;
+      --border: #252e3f;
+      --text: #e2e8f3;
+      --muted: #7d8a9e;
+      --accent: #64a8ff;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font: 15px/1.55 "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { color: #9ac5ff; }
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 48px 24px;
+      flex: 1;
+    }
+    h1 { font-size: 32px; margin-bottom: 6px; }
+    h1 span { color: var(--accent); }
+    .sub { color: var(--muted); font-size: 15px; margin-bottom: 40px; }
+    h2 { font-size: 14px; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); margin-bottom: 16px; }
+    .games {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 16px;
+    }
+    .game-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: border-color .2s, transform .2s;
+      text-decoration: none;
+      color: inherit;
+    }
+    .game-card:hover { border-color: rgba(100,168,255,0.4); transform: translateY(-2px); }
+    .game-thumb {
+      height: 180px;
+      background: linear-gradient(135deg, #1a2235, #111620);
+      display: grid;
+      place-items: center;
+      border-bottom: 1px solid var(--border);
+      font-size: 56px;
+    }
+    .game-body { padding: 18px; }
+    .game-body h3 { font-size: 18px; margin-bottom: 6px; }
+    .game-body p { color: var(--muted); font-size: 13px; line-height: 1.5; }
+    .game-footer {
+      padding: 10px 18px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+    }
+    .tag {
+      display: inline-block;
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 99px;
+      font-weight: 600;
+      background: rgba(100,168,255,0.12);
+      color: var(--accent);
+      border: 1px solid rgba(100,168,255,0.25);
+    }
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 20px 24px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+    }
+  </style>
 </head>
 <body>
-
-  <header class="topbar">
-    <div class="topbar-inner">
-      <a href="index.html" class="logo">Gank<span>Mid</span> — Wave Survival</a>
-      <nav>
-        <a href="index.html" class="active">Home</a>
-        <a href="docs/ui-assets-gallery.html">3D Assets</a>
-        <a href="docs/audio-asset-gallery.html">Audio</a>
-        <a href="docs/menu-hud-mockups.html">Menu & HUD</a>
-        <a href="docs/wave-map-mockups.html">Map Mockups</a>
-        <a href="docs/audio-design.html">Audio Design</a>
-        <a href="docs/powerup-design.html">Power-Ups</a>
-        <a href="docs/references.html">References</a>
-      </nav>
-    </div>
-  </header>
-
   <main class="container">
-    <section class="hero">
-      <h1>Dungeon Prototype — Wave Survival</h1>
-      <p class="sub">Design documentation hub for a Godot 4.6 wave-survival prototype. KayKit characters, skeleton enemies, greybox arenas, and escalating pressure.</p>
-      <div class="chips">
-        <span class="chip">Godot 4.6</span>
-        <span class="chip">Wave Survival</span>
-        <span class="chip">KayKit Assets</span>
-        <span class="chip">Kenney Textures</span>
-        <span class="chip">3 Map Variants</span>
-        <span class="chip">6 Playable Characters</span>
-        <span class="chip">24 Sound Assets</span>
-      </div>
-    </section>
+    <h1>Gank<span>Mid</span> Dev</h1>
+    <p class="sub">Development builds and design documentation.</p>
 
-    <h2 style="font-size:18px; margin-bottom:16px; color:var(--muted);">Design Documents</h2>
-
-    <div class="card-grid">
-      <a href="docs/ui-assets-gallery.html" class="card" style="text-decoration:none;color:inherit;">
-        <div class="card-thumb"><span class="icon">🗡️</span></div>
-        <div class="card-body">
-          <h3>3D Asset Gallery</h3>
-          <p>Interactive 3D models for all playable characters, skeleton enemies, weapons, animations, textures, and fonts. Drag to rotate, click to preview animations.</p>
+    <h2>Games</h2>
+    <div class="games">
+      <a href="games/wave-survival/" class="game-card">
+        <div class="game-thumb">💀</div>
+        <div class="game-body">
+          <h3>Wave Survival</h3>
+          <p>Dungeon prototype — Zombies-style wave survival with KayKit skeletons, greybox arenas, and escalating pressure. Design docs, asset galleries, and mockups.</p>
         </div>
-        <div class="card-footer">
-          <span>6 characters · 4 skeletons · 8 weapons · 90+ animations</span>
-          <span class="badge badge-html">Interactive</span>
-        </div>
-      </a>
-
-      <a href="docs/audio-asset-gallery.html" class="card" style="text-decoration:none;color:inherit;">
-        <div class="card-thumb"><span class="icon">🔊</span></div>
-        <div class="card-body">
-          <h3>Audio Asset Gallery</h3>
-          <p>Playable previews for all 24 sound assets — music tracks, player SFX, skeleton SFX, UI sounds, and ambient effects. Embedded Freesound players.</p>
-        </div>
-        <div class="card-footer">
-          <span>24 sounds · 5 buses · CC0 / CC-BY</span>
-          <span class="badge badge-html">Interactive</span>
-        </div>
-      </a>
-
-      <a href="docs/menu-hud-mockups.html" class="card" style="text-decoration:none;color:inherit;">
-        <div class="card-thumb"><span class="icon">🎮</span></div>
-        <div class="card-body">
-          <h3>Menu & HUD Mockups</h3>
-          <p>Static UI mockups for main menu, pause menu, options screen with interactive volume sliders, and the in-game HUD with health, stamina, and wave timer.</p>
-        </div>
-        <div class="card-footer">
-          <span>4 screen mockups · Interactive sliders</span>
-          <span class="badge badge-html">Interactive</span>
-        </div>
-      </a>
-
-      <a href="docs/wave-map-mockups.html" class="card" style="text-decoration:none;color:inherit;">
-        <div class="card-thumb"><span class="icon">🗺️</span></div>
-        <div class="card-body">
-          <h3>Wave Map Mockups</h3>
-          <p>SVG floor plans and vertical-level diagrams for 3 Zombies-style map variants with 1, 2, and 3 entrances. Toggle between floor plan and vertical views.</p>
-        </div>
-        <div class="card-footer">
-          <span>3 maps · Floor plan + vertical views</span>
-          <span class="badge badge-html">Interactive</span>
-        </div>
-      </a>
-
-      <a href="docs/audio-design.html" class="card" style="text-decoration:none;color:inherit;">
-        <div class="card-thumb"><span class="icon">🎵</span></div>
-        <div class="card-body">
-          <h3>Audio Design Document</h3>
-          <p>Complete audio specification — bus layout, trigger wiring, AudioManager API, volume slider implementation, file structure, and attribution requirements.</p>
-        </div>
-        <div class="card-footer">
-          <span>Sound spec · Bus layout · Options menu</span>
-          <span class="badge badge-md">Spec</span>
-        </div>
-      </a>
-
-      <a href="docs/powerup-design.html" class="card" style="text-decoration:none;color:inherit;">
-        <div class="card-thumb"><span class="icon">⚡</span></div>
-        <div class="card-body">
-          <h3>Power-Up Design Document</h3>
-          <p>Three timed power-ups — Double Jump, Regeneration, Attack Speed. Drop mechanics, buff tracking, HUD integration, and tuning constants.</p>
-        </div>
-        <div class="card-footer">
-          <span>3 power-ups · Drop mechanics · HUD spec</span>
-          <span class="badge badge-md">Spec</span>
-        </div>
-      </a>
-
-      <a href="docs/references.html" class="card" style="text-decoration:none;color:inherit;">
-        <div class="card-thumb"><span class="icon">📋</span></div>
-        <div class="card-body">
-          <h3>References & Planning</h3>
-          <p>All planning documents — PRD, game design doc, expert critique, vertical slice roadmap, MVP status report, handoff prompts, and external links.</p>
-        </div>
-        <div class="card-footer">
-          <span>14 planning docs · External resources</span>
-          <span class="badge badge-plan">Planning</span>
+        <div class="game-footer">
+          <span>Godot 4.6 · 3 maps · 6 characters</span>
+          <span class="tag">In Development</span>
         </div>
       </a>
     </div>
   </main>
-
-  <footer class="site-footer">
-    GankMid.co — Wave Survival Prototype — Godot 4.6
-  </footer>
-
+  <footer class="footer">GankMid.co</footer>
 </body>
 </html>

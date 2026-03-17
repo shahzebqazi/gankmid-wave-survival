@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GankMid — Wave Survival</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="index.html" class="logo">Gank<span>Mid</span> — Wave Survival</a>
+      <nav>
+        <a href="index.html" class="active">Home</a>
+        <a href="docs/ui-assets-gallery.html">3D Assets</a>
+        <a href="docs/audio-asset-gallery.html">Audio</a>
+        <a href="docs/menu-hud-mockups.html">Menu & HUD</a>
+        <a href="docs/wave-map-mockups.html">Map Mockups</a>
+        <a href="docs/audio-design.html">Audio Design</a>
+        <a href="docs/powerup-design.html">Power-Ups</a>
+        <a href="docs/references.html">References</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <h1>Dungeon Prototype — Wave Survival</h1>
+      <p class="sub">Design documentation hub for a Godot 4.6 wave-survival prototype. KayKit characters, skeleton enemies, greybox arenas, and escalating pressure.</p>
+      <div class="chips">
+        <span class="chip">Godot 4.6</span>
+        <span class="chip">Wave Survival</span>
+        <span class="chip">KayKit Assets</span>
+        <span class="chip">Kenney Textures</span>
+        <span class="chip">3 Map Variants</span>
+        <span class="chip">6 Playable Characters</span>
+        <span class="chip">24 Sound Assets</span>
+      </div>
+    </section>
+
+    <h2 style="font-size:18px; margin-bottom:16px; color:var(--muted);">Design Documents</h2>
+
+    <div class="card-grid">
+      <a href="docs/ui-assets-gallery.html" class="card" style="text-decoration:none;color:inherit;">
+        <div class="card-thumb"><span class="icon">🗡️</span></div>
+        <div class="card-body">
+          <h3>3D Asset Gallery</h3>
+          <p>Interactive 3D models for all playable characters, skeleton enemies, weapons, animations, textures, and fonts. Drag to rotate, click to preview animations.</p>
+        </div>
+        <div class="card-footer">
+          <span>6 characters · 4 skeletons · 8 weapons · 90+ animations</span>
+          <span class="badge badge-html">Interactive</span>
+        </div>
+      </a>
+
+      <a href="docs/audio-asset-gallery.html" class="card" style="text-decoration:none;color:inherit;">
+        <div class="card-thumb"><span class="icon">🔊</span></div>
+        <div class="card-body">
+          <h3>Audio Asset Gallery</h3>
+          <p>Playable previews for all 24 sound assets — music tracks, player SFX, skeleton SFX, UI sounds, and ambient effects. Embedded Freesound players.</p>
+        </div>
+        <div class="card-footer">
+          <span>24 sounds · 5 buses · CC0 / CC-BY</span>
+          <span class="badge badge-html">Interactive</span>
+        </div>
+      </a>
+
+      <a href="docs/menu-hud-mockups.html" class="card" style="text-decoration:none;color:inherit;">
+        <div class="card-thumb"><span class="icon">🎮</span></div>
+        <div class="card-body">
+          <h3>Menu & HUD Mockups</h3>
+          <p>Static UI mockups for main menu, pause menu, options screen with interactive volume sliders, and the in-game HUD with health, stamina, and wave timer.</p>
+        </div>
+        <div class="card-footer">
+          <span>4 screen mockups · Interactive sliders</span>
+          <span class="badge badge-html">Interactive</span>
+        </div>
+      </a>
+
+      <a href="docs/wave-map-mockups.html" class="card" style="text-decoration:none;color:inherit;">
+        <div class="card-thumb"><span class="icon">🗺️</span></div>
+        <div class="card-body">
+          <h3>Wave Map Mockups</h3>
+          <p>SVG floor plans and vertical-level diagrams for 3 Zombies-style map variants with 1, 2, and 3 entrances. Toggle between floor plan and vertical views.</p>
+        </div>
+        <div class="card-footer">
+          <span>3 maps · Floor plan + vertical views</span>
+          <span class="badge badge-html">Interactive</span>
+        </div>
+      </a>
+
+      <a href="docs/audio-design.html" class="card" style="text-decoration:none;color:inherit;">
+        <div class="card-thumb"><span class="icon">🎵</span></div>
+        <div class="card-body">
+          <h3>Audio Design Document</h3>
+          <p>Complete audio specification — bus layout, trigger wiring, AudioManager API, volume slider implementation, file structure, and attribution requirements.</p>
+        </div>
+        <div class="card-footer">
+          <span>Sound spec · Bus layout · Options menu</span>
+          <span class="badge badge-md">Spec</span>
+        </div>
+      </a>
+
+      <a href="docs/powerup-design.html" class="card" style="text-decoration:none;color:inherit;">
+        <div class="card-thumb"><span class="icon">⚡</span></div>
+        <div class="card-body">
+          <h3>Power-Up Design Document</h3>
+          <p>Three timed power-ups — Double Jump, Regeneration, Attack Speed. Drop mechanics, buff tracking, HUD integration, and tuning constants.</p>
+        </div>
+        <div class="card-footer">
+          <span>3 power-ups · Drop mechanics · HUD spec</span>
+          <span class="badge badge-md">Spec</span>
+        </div>
+      </a>
+
+      <a href="docs/references.html" class="card" style="text-decoration:none;color:inherit;">
+        <div class="card-thumb"><span class="icon">📋</span></div>
+        <div class="card-body">
+          <h3>References & Planning</h3>
+          <p>All planning documents — PRD, game design doc, expert critique, vertical slice roadmap, MVP status report, handoff prompts, and external links.</p>
+        </div>
+        <div class="card-footer">
+          <span>14 planning docs · External resources</span>
+          <span class="badge badge-plan">Planning</span>
+        </div>
+      </a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    GankMid.co — Wave Survival Prototype — Godot 4.6
+  </footer>
+
+</body>
+</html>
